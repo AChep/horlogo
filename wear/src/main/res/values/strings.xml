@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Horlogo</string>
+    <string name="watchface_name">Horlogo</string>
+
+    <string name="config_complications">Complications</string>
+    <string name="config_complication_numbered">Complication #%d</string>
+    <string name="config_accent">Accent color</string>
+    <string name="config_about">About</string>
+
+    <string name="red">Red</string>
+    <string name="pink">Pink</string>
+    <string name="purple">Purple</string>
+    <string name="deep_purple">Deep purple</string>
+    <string name="indigo">Indigo</string>
+    <string name="blue">Blue</string>
+    <string name="cyan">Cyan</string>
+    <string name="teal">Teal</string>
+    <string name="green">Green</string>
+    <string name="light_green">Light green</string>
+    <string name="lime">Lime</string>
+    <string name="yellow">Yellow</string>
+    <string name="amber">Amber</string>
+    <string name="orange">Orange</string>
+    <string name="deep_orange">Deep orange</string>
+    <string name="brown">Brown</string>
+    <string name="grey">Grey</string>
+    <string name="white">White</string>
+
+    <string name="dialog_about_message"><![CDATA[
+        <b>Horlogo is a simple watch face released under GPLv3 license.</b><br/>
+        <br/>
+        Copyright %1$d Artem Chepurnoy.
+        All Rights Reserved.
+    ]]></string>
+
+</resources>
