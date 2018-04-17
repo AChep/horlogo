@@ -1,6 +1,9 @@
 # horlogo
 [![Build Status](https://travis-ci.org/AChep/horlogo.svg?branch=master)](https://travis-ci.org/AChep/horlogo)
 
+<img alt="Logo" align="right" height="220"
+   src="https://github.com/AChep/horlogo/raw/master/art/icon_512.png" />
+
 Simple watch face written for Android Wear 2 or higher.
 
 Report a bug or request a feature
