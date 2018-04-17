@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
@@ -14,10 +16,21 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+
+    Date date = Calendar.getInstance().getTime()
+    String time = new SimpleDateFormat("EEE MMMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).format(date)
+    String timeYear = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date)
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        // Add config fields to each of build types.
+        buildTypes.each {
+            it.buildConfigField "String", "MY_TIME", "\"" + time + "\""
+            it.buildConfigField "String", "MY_TIME_YEAR", "\"" + timeYear + "\""
         }
     }
 }

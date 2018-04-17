@@ -26,10 +26,13 @@
     <string name="grey">Grey</string>
     <string name="white">White</string>
 
-    <string name="dialog_about_message"><![CDATA[
+    <string name="about_title" translatable="false"><![CDATA[
+        <b>%1$s</b>&nbsp;v%2$s
+    ]]></string>
+    <string name="about_content"><![CDATA[
         <b>Horlogo is a simple watch face released under GPLv3 license.</b><br/>
         <br/>
-        Copyright %1$d Artem Chepurnoy.
+        Copyright %1$s Artem Chepurnoy.
         All Rights Reserved.
     ]]></string>
 

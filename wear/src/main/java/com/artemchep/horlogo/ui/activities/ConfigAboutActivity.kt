@@ -1,32 +1,47 @@
 package com.artemchep.horlogo.ui.activities
 
-import android.app.Activity
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
+import android.view.View
+import android.widget.Toast
 import com.artemchep.horlogo.R
+import com.artemchep.horlogo.contracts.IAboutPresenter
+import com.artemchep.horlogo.contracts.IAboutView
+import com.artemchep.horlogo.presenters.AboutPresenter
+import com.artemchep.horlogo.ui.activities.base.ActivityBase
 import kotlinx.android.synthetic.main.activity_config_about.*
-import java.util.*
-
 
 /**
  * @author Artem Chepurnoy
  */
-class ConfigAboutActivity : Activity() {
+class ConfigAboutActivity : ActivityBase<IAboutView, IAboutPresenter>(), IAboutView, View.OnClickListener {
+
+    override val view: IAboutView = this
+
+    override fun createPresenter() = AboutPresenter(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_config_about)
 
-        contentTextView.text = getContentMessage()
+        titleTextView.setOnClickListener(this)
     }
 
-    private fun getContentMessage(): CharSequence {
-        val calendar = Calendar.getInstance()
-        val src = getString(R.string.dialog_about_message, calendar.get(Calendar.YEAR))
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Html.fromHtml(src, Html.FROM_HTML_MODE_COMPACT)
-        } else Html.fromHtml(src)
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.titleTextView -> presenter.showBuildInfo()
+        }
+    }
+
+    override fun setTitleText(title: CharSequence) {
+        titleTextView.text = title
+    }
+
+    override fun setContentText(content: CharSequence) {
+        contentTextView.text = content
+    }
+
+    override fun showToast(text: CharSequence) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
 }
