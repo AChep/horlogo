@@ -8,7 +8,6 @@ import android.view.View
 import com.artemchep.horlogo.Config
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.model.ConfigItem
-import com.artemchep.horlogo.model.findById
 import com.artemchep.horlogo.ui.Palette
 import com.artemchep.horlogo.ui.adapter.ConfigAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
@@ -120,8 +119,11 @@ class ConfigActivity : Activity(), OnItemClickListener<ConfigItem> {
     }
 
     private fun updateAccentColorItem() {
-        val (position, item) = items.findById(ITEM_ACCENT_COLOR)!!
-        item.summary = Palette.getPaletteNames(resources)[Config.accentColor]
+        val position = items.indexOfFirst { it.id == ITEM_ACCENT_COLOR }
+        items[position].apply {
+            summary = Palette.getPaletteNames(resources)[Config.accentColor]
+        }
+
         adapter.notifyItemChanged(position)
     }
 

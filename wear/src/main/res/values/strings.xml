@@ -3,7 +3,10 @@
     <string name="watchface_name">Horlogo</string>
 
     <string name="config_complications">Complications</string>
-    <string name="config_complication_numbered">Complication #%d</string>
+    <string name="config_complication_first_line">First line</string>
+    <string name="config_complication_second_line">Second line</string>
+    <string name="config_complication_third_line">Third line</string>
+    <string name="config_complication_fourth_line">Fourth line</string>
     <string name="config_accent">Accent color</string>
     <string name="config_about">About</string>
 
