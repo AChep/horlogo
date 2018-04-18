@@ -60,7 +60,6 @@ class ConfigActivity : Activity(), OnItemClickListener<ConfigItem> {
         recyclerView.apply {
             isEdgeItemsCenteringEnabled = true
             layoutManager = LinearLayoutManager(this@ConfigActivity)
-            setHasFixedSize(true)
 
             adapter = this@ConfigActivity.adapter
         }

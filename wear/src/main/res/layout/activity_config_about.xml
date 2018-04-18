@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/activity_config_padding"
+        android:paddingStart="@dimen/header_start_padding"
         android:paddingTop="56dp"
-        android:paddingEnd="@dimen/activity_config_padding"
+        android:paddingEnd="@dimen/header_end_padding"
         android:paddingBottom="56dp">
 
         <TextView

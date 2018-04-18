@@ -13,7 +13,7 @@
         android:id="@+id/iconImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="@dimen/activity_config_padding"
+        android:layout_marginStart="@dimen/list_start_padding"
         android:background="@drawable/bg_circle"
         android:padding="8dp"
         android:tint="?android:textColorPrimary"
@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="@dimen/activity_config_padding"
+        android:layout_marginEnd="@dimen/list_end_padding"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/summaryTextView"
@@ -43,11 +43,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="@dimen/activity_config_padding"
+        android:layout_marginEnd="@dimen/list_end_padding"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iconImageView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
-        android:text="Detailed information" />
+        tools:text="Detailed information"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>
