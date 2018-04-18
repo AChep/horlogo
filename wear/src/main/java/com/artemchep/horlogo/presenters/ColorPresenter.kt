@@ -17,17 +17,9 @@ class ColorPresenter(context: Context, private val selectedColor: Int) : IColorP
 
     init {
         val map = Palette.getPaletteNames(context.resources)
-        val items = ArrayList<ConfigPaletteItem>(map.size())
-
-        // Map sparse array of colors to list of
-        // palette items.
-        for (i in 0 until map.size()) {
-            val color = map.keyAt(i)
-            val name = map.valueAt(i)
-            items.add(ConfigPaletteItem(color, name))
-        }
-
-        this.items = items.toList()
+        items = Palette.PALETTE
+                .map { ConfigPaletteItem(it, map[it]) }
+                .toList()
     }
 
     override fun onStart() {

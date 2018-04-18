@@ -7,7 +7,6 @@ import android.util.SparseArray
 import com.artemchep.horlogo.R
 import java.lang.ref.Reference
 import java.lang.ref.SoftReference
-import java.lang.ref.WeakReference
 
 /**
  * @author Artem Chepurnoy
@@ -53,7 +52,8 @@ object Palette {
             RED, PINK, PURPLE, DEEP_PURPLE,
             INDIGO, BLUE, CYAN, TEAL, GREEN,
             LIGHT_GREEN, LIME, YELLOW, AMBER,
-            ORANGE, DEEP_ORANGE, BROWN, GREY)
+            ORANGE, DEEP_ORANGE, BROWN, GREY,
+            Color.WHITE)
 
     private var sPaletteNamesRef : Reference<SparseArray<String>>? = null
 
