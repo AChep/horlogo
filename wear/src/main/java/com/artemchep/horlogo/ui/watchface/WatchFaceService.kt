@@ -137,7 +137,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             val now = System.currentTimeMillis()
             calendar.timeInMillis = now
 
-            complicationDataSparse.forEachIndexed { index, value ->
+            complicationDataSparse.forEachIndexed { _, value ->
                 val shortText = value.raw.shortText?.getText(this@WatchFaceService, now)
                 val shortTitle = value.raw.shortTitle?.getText(this@WatchFaceService, now)
 
