@@ -58,9 +58,20 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
                     title = context.getString(R.string.config_complication_fourth_line))
     )
 
+    /**
+     * Represents the amount of not retrieved [COMPLICATIONS] at
+     * current moment of time.
+     *
+     * It may vary from `0` to [COMPLICATIONS.size()].
+     */
+    private var providerInfoLoadingCounter = 0
+
     private val providerInfoRetrieverCallback = object : ProviderInfoRetriever.OnProviderInfoReceivedCallback() {
         override fun onProviderInfoReceived(watchFaceComplicationId: Int, info: ComplicationProviderInfo?) {
             Log.d(TAG, "Complication data update: id=$watchFaceComplicationId, info=$info")
+
+            providerInfoLoadingCounter--
+            assert(providerInfoLoadingCounter >= 0)
 
             val index = models.indexOfFirst { it.id == watchFaceComplicationId }
             models[index].apply {
@@ -69,7 +80,12 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
             }
 
             // Update the view
-            view?.notifyItemChanged(index)
+            view?.apply {
+                if (providerInfoLoadingCounter == 0) {
+                    notifyItemsChanged()
+                    setLoadingIndicatorShown(false)
+                }
+            }
         }
 
         override fun onRetrievalFailed() {
@@ -93,6 +109,9 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
 
     override fun onResume() {
         super.onResume()
+
+        providerInfoLoadingCounter = COMPLICATIONS.size
+        view!!.setLoadingIndicatorShown(true)
 
         // Ask provider info retriever to retrieve current
         // complications data

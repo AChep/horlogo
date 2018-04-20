@@ -15,7 +15,7 @@ import com.artemchep.horlogo.ui.activities.base.ActivityBase
 import com.artemchep.horlogo.ui.adapter.ConfigAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
 import com.artemchep.horlogo.ui.watchface.WatchFaceService
-import kotlinx.android.synthetic.main.activity_config.*
+import kotlinx.android.synthetic.main.activity_config_complications.*
 
 
 /**
@@ -40,8 +40,8 @@ class ConfigComplicationsActivity : ActivityBase<IComplicationsView, IComplicati
             onItemClickListener = this@ConfigComplicationsActivity
         }
 
-        setContentView(R.layout.activity_config)
-        recyclerView.apply {
+        setContentView(R.layout.activity_config_complications)
+        complicationsRecyclerView.apply {
             isEdgeItemsCenteringEnabled = true
             layoutManager = LinearLayoutManager(this@ConfigComplicationsActivity)
 
@@ -65,6 +65,21 @@ class ConfigComplicationsActivity : ActivityBase<IComplicationsView, IComplicati
         val intent = ComplicationHelperActivity.createProviderChooserHelperIntent(this, watchFace, id, *supportedTypes)
         startActivity(intent)
 
+    }
+
+    override fun setLoadingIndicatorShown(shown: Boolean) {
+        progressView
+                .animate()
+                .alpha(if (shown) 1f else 0f)
+                .apply {
+                    if (shown) {
+                        progressView.visibility = View.VISIBLE
+                    } else {
+                        withEndAction {
+                            progressView.visibility = View.GONE
+                        }
+                    }
+                }
     }
 
     override fun notifyItemChanged(index: Int) {

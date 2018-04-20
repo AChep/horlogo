@@ -11,6 +11,8 @@ interface IComplicationsView : IView<IComplicationsView, IComplicationsPresenter
 
     var items : MutableList<ConfigItem>
 
+    fun setLoadingIndicatorShown(shown: Boolean)
+
     fun notifyItemChanged(index: Int)
 
     fun notifyItemsChanged()
