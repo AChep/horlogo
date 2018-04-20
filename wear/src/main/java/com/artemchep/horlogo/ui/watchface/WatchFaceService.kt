@@ -5,12 +5,12 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.watchface.CanvasWatchFaceService
+import android.text.format.DateFormat
 import android.util.Log
 import android.util.SparseArray
 import android.view.SurfaceHolder
 import com.artemchep.horlogo.Config
 import com.artemchep.horlogo.extensions.forEachIndexed
-import com.artemchep.horlogo.ui.Palette
 import com.artemchep.horlogo.util.ConfigManager
 import com.artemchep.horlogo.util.TimezoneManager
 import java.util.*
@@ -174,7 +174,16 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         override fun onDraw(canvas: Canvas, bounds: Rect) {
             super.onDraw(canvas, bounds)
-            val hh = formatTwoDigitNumber(calendar.get(Calendar.HOUR_OF_DAY))
+            val is24Hour = DateFormat.is24HourFormat(this@WatchFaceService)
+            val hh = formatTwoDigitNumber(if (is24Hour) {
+                calendar.get(Calendar.HOUR_OF_DAY)
+            } else {
+                var hour = calendar.get(Calendar.HOUR)
+                if (hour == 0) {
+                    hour = 12
+                }
+                hour
+            })
             val mm = formatTwoDigitNumber(calendar.get(Calendar.MINUTE))
 
             val margin = 6 * density
