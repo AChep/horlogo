@@ -10,6 +10,9 @@
     <string name="config_accent">Accent color</string>
     <string name="config_about">About</string>
 
+    <string name="error">Something went wrong, tap to retry</string>
+    <string name="retry">Retry</string>
+
     <string name="red">Red</string>
     <string name="pink">Pink</string>
     <string name="purple">Purple</string>

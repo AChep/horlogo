@@ -4,7 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.support.wearable.complications.ComplicationProviderInfo
 import android.support.wearable.complications.ProviderInfoRetriever
-import android.util.Log
+import android.util.SparseBooleanArray
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IComplicationsPresenter
 import com.artemchep.horlogo.contracts.IComplicationsView
@@ -17,23 +17,14 @@ import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATIO
 import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATION_THIRD
 import java.util.concurrent.Executors
 
+private typealias Data = Pair<Int, ComplicationProviderInfo?>
+
 /**
  * @author Artem Chepurnoy
  */
 class ComplicationsPresenter(private val context: Context) : IComplicationsPresenter {
 
-    companion object {
-        private const val TAG = "ComplicationsPresenter"
-    }
-
     override var view: IComplicationsView? = null
-        set(value) {
-            field = value
-
-            // Immediately bind the models of items to
-            // view. See [notifyItemChanged, notifyItemsChanged]
-            value?.items = models
-        }
 
     private lateinit var providerInfoRetriever: ProviderInfoRetriever
 
@@ -58,65 +49,71 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
                     title = context.getString(R.string.config_complication_fourth_line))
     )
 
+    private var providerInfoBucket: ComplicationProviderInfoBucket? = null
+
     /**
-     * Represents the amount of not retrieved [COMPLICATIONS] at
-     * current moment of time.
-     *
-     * It may vary from `0` to [COMPLICATIONS.size()].
+     * `true` if it's a first time we loading the complication
+     * info, `false` otherwise.
      */
-    private var providerInfoLoadingCounter = 0
+    private var firstLoad = true
 
-    private val providerInfoRetrieverCallback = object : ProviderInfoRetriever.OnProviderInfoReceivedCallback() {
-        override fun onProviderInfoReceived(watchFaceComplicationId: Int, info: ComplicationProviderInfo?) {
-            Log.d(TAG, "Complication data update: id=$watchFaceComplicationId, info=$info")
-
-            providerInfoLoadingCounter--
-            assert(providerInfoLoadingCounter >= 0)
-
-            val index = models.indexOfFirst { it.id == watchFaceComplicationId }
-            models[index].apply {
-                icon = info?.providerIcon?.loadDrawable(context) ?: emptyModelIcon
-                summary = info?.providerName
-            }
-
-            // Update the view
-            view?.apply {
-                if (providerInfoLoadingCounter == 0) {
-                    notifyItemsChanged()
-                    setLoadingIndicatorShown(false)
-                }
-            }
-        }
-
-        override fun onRetrievalFailed() {
-            Log.w(TAG, "Complication data retrieval failed")
-
-            models.forEach {
-                it.icon = emptyModelIcon
-                it.summary = null
-            }
-
-            // Update the view
-            view?.notifyItemsChanged()
-        }
-    }
+    private var lastFailed = false
 
     override fun onStart() {
         super.onStart()
         providerInfoRetriever = ProviderInfoRetriever(context, Executors.newCachedThreadPool())
         providerInfoRetriever.init()
+
+        view!!.showComplicationsInfo(models)
     }
 
     override fun onResume() {
         super.onResume()
+        retrieveProviderInfo()
+    }
 
-        providerInfoLoadingCounter = COMPLICATIONS.size
-        view!!.setLoadingIndicatorShown(true)
+    override fun retrieveProviderInfo() {
+        if (firstLoad || lastFailed) {
+            view!!.showLoader()
+        }
 
-        // Ask provider info retriever to retrieve current
-        // complications data
-        val componentName = ComponentName(context, WatchFaceService::class.java)
-        providerInfoRetriever.retrieveProviderInfo(providerInfoRetrieverCallback, componentName, *COMPLICATIONS)
+        providerInfoBucket?.cancel()
+        providerInfoBucket = ComplicationProviderInfoBucket(object : ComplicationProviderInfoBucket.Callback {
+            override fun onProviderInfoReceived(list: List<Data>) {
+                firstLoad = false
+                lastFailed = false
+
+                list.forEach { (watchFaceComplicationId, info) ->
+                    val index = models.indexOfFirst { it.id == watchFaceComplicationId }
+                    models[index].apply {
+                        icon = info?.providerIcon?.loadDrawable(context) ?: emptyModelIcon
+                        summary = info?.providerName
+                    }
+                }
+
+                view!!.showComplicationsInfo(models)
+            }
+
+            override fun onRetrievalFailed() {
+                firstLoad = false
+                lastFailed = true
+
+                models.forEach {
+                    it.icon = emptyModelIcon
+                    it.summary = null
+                }
+
+                view!!.showError()
+            }
+        }, *COMPLICATIONS)
+
+        val watchFaceComponentName = ComponentName(context, WatchFaceService::class.java)
+        providerInfoRetriever.retrieveProviderInfo(providerInfoBucket, watchFaceComponentName, *COMPLICATIONS)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        providerInfoBucket?.cancel()
     }
 
     override fun onStop() {
@@ -129,6 +126,66 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
         }
 
         super.onStop()
+    }
+
+    /**
+     * @author Artem Chepurnoy
+     */
+    private class ComplicationProviderInfoBucket : ProviderInfoRetriever.OnProviderInfoReceivedCallback {
+
+        private var callback: Callback?
+
+        private val data: MutableList<Data>
+        private val check: SparseBooleanArray
+
+        /**
+         * @author Artem Chepurnoy
+         */
+        interface Callback {
+
+            fun onProviderInfoReceived(list: List<Data>)
+
+            fun onRetrievalFailed()
+
+        }
+
+        constructor(callback: Callback, vararg ids: Int) : super() {
+            this.callback = callback
+
+            data = ArrayList()
+            check = SparseBooleanArray()
+
+            ids.forEach {
+                check.put(it, false)
+            }
+        }
+
+        override fun onProviderInfoReceived(watchFaceComplicationId: Int, info: ComplicationProviderInfo?) {
+            check.put(watchFaceComplicationId, true)
+            data += watchFaceComplicationId to info
+
+            // Check if we retrieved all of the complication provider
+            // info
+            val size = check.size()
+            for (i in 0 until size) {
+                if (!check.valueAt(i)) return
+            }
+
+            callback?.onProviderInfoReceived(data)
+        }
+
+        override fun onRetrievalFailed() {
+            callback?.onRetrievalFailed()
+        }
+
+        /**
+         * After calling this method the callback is guaranteed to
+         * not be called.
+         */
+        fun cancel() {
+            callback = null
+        }
+
     }
 
 }

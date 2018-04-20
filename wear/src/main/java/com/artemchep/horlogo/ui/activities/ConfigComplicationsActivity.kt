@@ -23,29 +23,34 @@ import kotlinx.android.synthetic.main.activity_config_complications.*
  */
 class ConfigComplicationsActivity : ActivityBase<IComplicationsView, IComplicationsPresenter>(),
         IComplicationsView,
+        View.OnClickListener,
         OnItemClickListener<ConfigItem> {
 
     override val view: IComplicationsView = this
 
-    override lateinit var items: MutableList<ConfigItem>
+    private val models = ArrayList<ConfigItem>()
 
-    private lateinit var adapter: ConfigAdapter
+    private val adapter = ConfigAdapter(models).apply {
+        onItemClickListener = this@ConfigComplicationsActivity
+    }
 
     override fun createPresenter() = ComplicationsPresenter(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        adapter = ConfigAdapter(items).apply {
-            onItemClickListener = this@ConfigComplicationsActivity
-        }
-
         setContentView(R.layout.activity_config_complications)
+        errorView.setOnClickListener(this)
         complicationsRecyclerView.apply {
             isEdgeItemsCenteringEnabled = true
             layoutManager = LinearLayoutManager(this@ConfigComplicationsActivity)
 
             adapter = this@ConfigComplicationsActivity.adapter
+        }
+    }
+
+    override fun onClick(view: View) {
+        if (view == errorView) {
+            presenter.retrieveProviderInfo()
         }
     }
 
@@ -64,30 +69,31 @@ class ConfigComplicationsActivity : ActivityBase<IComplicationsView, IComplicati
         val watchFace = ComponentName(this, WatchFaceService::class.java)
         val intent = ComplicationHelperActivity.createProviderChooserHelperIntent(this, watchFace, id, *supportedTypes)
         startActivity(intent)
-
     }
 
-    override fun setLoadingIndicatorShown(shown: Boolean) {
-        progressView
-                .animate()
-                .alpha(if (shown) 1f else 0f)
-                .apply {
-                    if (shown) {
-                        progressView.visibility = View.VISIBLE
-                    } else {
-                        withEndAction {
-                            progressView.visibility = View.GONE
-                        }
-                    }
-                }
-    }
+    override fun showComplicationsInfo(list: List<ConfigItem>) {
+        models.apply {
+            clear()
+            addAll(list)
+        }
 
-    override fun notifyItemChanged(index: Int) {
-        adapter.notifyItemChanged(index)
-    }
-
-    override fun notifyItemsChanged() {
         adapter.notifyDataSetChanged()
+
+        complicationsRecyclerView.visibility = View.VISIBLE
+        progressView.visibility = View.GONE
+        errorView.visibility = View.GONE
+    }
+
+    override fun showError() {
+        complicationsRecyclerView.visibility = View.INVISIBLE
+        progressView.visibility = View.GONE
+        errorView.visibility = View.VISIBLE
+    }
+
+    override fun showLoader() {
+        complicationsRecyclerView.visibility = View.INVISIBLE
+        progressView.visibility = View.VISIBLE
+        errorView.visibility = View.GONE
     }
 
 }

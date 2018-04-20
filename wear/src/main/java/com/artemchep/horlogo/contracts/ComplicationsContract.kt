@@ -9,13 +9,11 @@ import com.artemchep.horlogo.model.ConfigItem
  */
 interface IComplicationsView : IView<IComplicationsView, IComplicationsPresenter> {
 
-    var items : MutableList<ConfigItem>
+    fun showComplicationsInfo(list: List<ConfigItem>)
 
-    fun setLoadingIndicatorShown(shown: Boolean)
+    fun showError()
 
-    fun notifyItemChanged(index: Int)
-
-    fun notifyItemsChanged()
+    fun showLoader()
 
 }
 
@@ -23,4 +21,7 @@ interface IComplicationsView : IView<IComplicationsView, IComplicationsPresenter
  * @author Artem Chepurnoy
  */
 interface IComplicationsPresenter : IPresenter<IComplicationsPresenter, IComplicationsView> {
+
+    fun retrieveProviderInfo()
+
 }
