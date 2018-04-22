@@ -28,7 +28,8 @@
         </activity>
 
         <activity android:name=".ui.activities.ConfigComplicationsActivity" />
-        <activity android:name=".ui.activities.ConfigAccentActivity" />
+        <activity android:name=".ui.activities.ConfigThemeActivity" />
+        <activity android:name=".ui.activities.ConfigPickerActivity" />
         <activity android:name=".ui.activities.ConfigAboutActivity" />
 
         <meta-data

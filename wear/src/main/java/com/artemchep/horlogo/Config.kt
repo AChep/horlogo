@@ -3,6 +3,7 @@ package com.artemchep.horlogo
 import android.content.Context
 import android.content.SharedPreferences
 import com.artemchep.horlogo.ui.Palette
+import com.artemchep.horlogo.ui.Theme
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -13,17 +14,31 @@ import kotlin.reflect.KProperty
 object Config {
 
     private const val KEY_ACCENT_COLOR = "accent"
+    private const val KEY_THEME = "theme"
 
     private var editor: SharedPreferences.Editor? = null
     private var broadcasting = false
 
     var accentColor: Int by configProperty(KEY_ACCENT_COLOR, Palette.BLUE)
+    var themeName: String by configProperty(KEY_THEME, Theme.BLACK.name)
+
+    /**
+     * Returns associated with [themeName] enum
+     * object.
+     */
+    val theme: Theme
+        get() = try {
+            Theme.valueOf(themeName)
+        } catch (e: IllegalArgumentException) {
+            Theme.BLACK
+        }
 
     fun init(context: Context) {
         broadcasting = true
 
         val map = context.getConfigSharedPreferences().all
         (map[KEY_ACCENT_COLOR] as Int?)?.also { accentColor = it }
+        (map[KEY_THEME] as String?)?.also { themeName = it }
 
         broadcasting = false
     }

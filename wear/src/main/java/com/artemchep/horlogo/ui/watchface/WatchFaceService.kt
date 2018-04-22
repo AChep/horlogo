@@ -78,6 +78,8 @@ class WatchFaceService : CanvasWatchFaceService() {
         // PAINTS
         //
 
+        private var backgroundColor: Int = Color.BLACK
+
         private val hourPaint = Paint().apply {
             color = Config.accentColor
             textSize = 110f
@@ -130,6 +132,17 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         private fun loadConfig() {
             hourPaint.color = Config.accentColor
+            Config.theme.also {
+                backgroundColor = it.backgroundColor
+                minutePaint.color = it.clockMinuteColor
+                complicationsPaint.color = it.complicationColor
+            }
+
+            // Refresh the tint color of icons
+            complicationDataSparse.forEachIndexed { _, value ->
+                value.ambientIconDrawable?.setTint(complicationsPaint.color)
+                value.iconDrawable?.setTint(complicationsPaint.color)
+            }
         }
 
         override fun onTimeTick() {
@@ -189,7 +202,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             val margin = 6 * density
             val itemSize = 20 * density
 
-            canvas.drawColor(Color.BLACK)
+            canvas.drawColor(backgroundColor)
 
             // Calculate the bounds of both hours
             // and minutes

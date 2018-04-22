@@ -1,12 +1,7 @@
 package com.artemchep.horlogo.ui
 
-import android.content.res.Resources
 import android.graphics.Color
 import android.support.annotation.ColorInt
-import android.util.SparseArray
-import com.artemchep.horlogo.R
-import java.lang.ref.Reference
-import java.lang.ref.SoftReference
 
 /**
  * @author Artem Chepurnoy
@@ -54,34 +49,5 @@ object Palette {
             LIGHT_GREEN, LIME, YELLOW, AMBER,
             ORANGE, DEEP_ORANGE, BROWN, GREY,
             Color.WHITE)
-
-    private var sPaletteNamesRef : Reference<SparseArray<String>>? = null
-
-    fun getPaletteNames(resources : Resources) : SparseArray<String> {
-        return sPaletteNamesRef?.get() ?: SparseArray<String>().apply {
-            with(resources) {
-                put(Palette.RED, getString(R.string.red))
-                put(Palette.PINK, getString(R.string.pink))
-                put(Palette.PURPLE, getString(R.string.purple))
-                put(Palette.DEEP_PURPLE, getString(R.string.deep_purple))
-                put(Palette.INDIGO, getString(R.string.indigo))
-                put(Palette.BLUE, getString(R.string.blue))
-                put(Palette.CYAN, getString(R.string.cyan))
-                put(Palette.TEAL, getString(R.string.teal))
-                put(Palette.GREEN, getString(R.string.green))
-                put(Palette.LIGHT_GREEN, getString(R.string.light_green))
-                put(Palette.LIME, getString(R.string.lime))
-                put(Palette.YELLOW, getString(R.string.yellow))
-                put(Palette.AMBER, getString(R.string.amber))
-                put(Palette.ORANGE, getString(R.string.orange))
-                put(Palette.DEEP_ORANGE, getString(R.string.deep_orange))
-                put(Palette.BROWN, getString(R.string.brown))
-                put(Palette.GREY, getString(R.string.grey))
-                put(Color.WHITE, getString(R.string.white))
-            }
-        }.also {
-            sPaletteNamesRef = SoftReference(it)
-        }
-    }
 
 }
