@@ -13,15 +13,15 @@ enum class Theme(
 
     BLACK(
             backgroundColor = Color.BLACK,
-            clockMinuteColor = Color.GRAY,
+            clockMinuteColor = 0xFF546E7A.toInt(),
             complicationColor = Color.LTGRAY),
     DARK(
             backgroundColor = 0xFF212121.toInt(),
-            clockMinuteColor = Color.GRAY,
+            clockMinuteColor = 0xFF546E7A.toInt(),
             complicationColor = Color.LTGRAY),
     LIGHT(
             backgroundColor = 0xFFF5F5F5.toInt(),
-            clockMinuteColor = Color.GRAY,
+            clockMinuteColor = 0xFF78909C.toInt(),
             complicationColor = Color.DKGRAY);
 
 }
