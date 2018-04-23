@@ -3,6 +3,7 @@ package com.artemchep.horlogo.ui.watchface
 import android.content.res.AssetManager
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.support.annotation.ColorInt
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.watchface.CanvasWatchFaceService
 import android.text.format.DateFormat
@@ -10,6 +11,7 @@ import android.util.Log
 import android.util.SparseArray
 import android.view.SurfaceHolder
 import com.artemchep.horlogo.Config
+import com.artemchep.horlogo.extensions.contains
 import com.artemchep.horlogo.extensions.forEachIndexed
 import com.artemchep.horlogo.util.ConfigManager
 import com.artemchep.horlogo.util.TimezoneManager
@@ -78,26 +80,55 @@ class WatchFaceService : CanvasWatchFaceService() {
         // PAINTS
         //
 
-        private var backgroundColor: Int = Color.BLACK
+        private val paintManager: PaintManager
 
-        private val hourPaint = Paint().apply {
-            color = Config.accentColor
-            textSize = 110f
-            textScaleX = 0.92f
-            textAlign = Paint.Align.RIGHT
-            isAntiAlias = true
-            typeface = getTypeface(assets, "Overlock-Regular")
-        }
+        init {
+            val hourPaint = Paint().apply {
+                color = Color.WHITE
+                textSize = 110f
+                textScaleX = 0.92f
+                textAlign = Paint.Align.RIGHT
+                isAntiAlias = true
+                typeface = getTypeface(assets, "Overlock-Regular")
+            }
 
-        private val minutePaint = Paint(hourPaint).apply {
-            color = Color.GRAY
-        }
+            val minutePaint = Paint(hourPaint).apply {
+                color = Color.GRAY
+            }
 
-        private val complicationsPaint = Paint().apply {
-            color = Color.LTGRAY
-            textSize = 23f
-            typeface = TYPEFACE_MEDIUM
-            isAntiAlias = true
+            val complicationsPaint = Paint().apply {
+                color = Color.LTGRAY
+                textSize = 23f
+                typeface = TYPEFACE_MEDIUM
+                isAntiAlias = true
+            }
+
+            paintManager = PaintManager(
+                    PaintHolder(Color.BLACK, hourPaint, minutePaint, complicationsPaint),
+                    // Ambient mode paint; does not change over time
+                    PaintHolder(
+                            Color.BLACK,
+                            Paint(hourPaint).apply {
+                                isAntiAlias = false
+                            },
+                            Paint(minutePaint).apply {
+                                isAntiAlias = false
+                            },
+                            Paint(complicationsPaint).apply {
+                                isAntiAlias = false
+                            }
+                    ),
+                    { holder, event ->
+                        if (event contains PaintManager.EVENT_PRIMARY) {
+                            // Refresh the tint color of icons
+                            complicationDataSparse.forEachIndexed { _, value ->
+                                value.ambientIconDrawable?.setTint(holder.complicationsPaint.color)
+                                value.iconDrawable?.setTint(holder.complicationsPaint.color)
+                            }
+                        }
+                    }
+            )
+
         }
 
         override fun onCreate(holder: SurfaceHolder?) {
@@ -107,6 +138,11 @@ class WatchFaceService : CanvasWatchFaceService() {
             configManager = ConfigManager(context)
 
             setActiveComplications(*COMPLICATIONS)
+        }
+
+        override fun onAmbientModeChanged(inAmbientMode: Boolean) {
+            super.onAmbientModeChanged(inAmbientMode)
+            paintManager.isAmbientMode = inAmbientMode
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
@@ -131,17 +167,12 @@ class WatchFaceService : CanvasWatchFaceService() {
         }
 
         private fun loadConfig() {
-            hourPaint.color = Config.accentColor
-            Config.theme.also {
-                backgroundColor = it.backgroundColor
-                minutePaint.color = it.clockMinuteColor
-                complicationsPaint.color = it.complicationColor
-            }
-
-            // Refresh the tint color of icons
-            complicationDataSparse.forEachIndexed { _, value ->
-                value.ambientIconDrawable?.setTint(complicationsPaint.color)
-                value.iconDrawable?.setTint(complicationsPaint.color)
+            val theme = Config.theme
+            paintManager.apply {
+                setAccentColor(Config.accentColor)
+                setBackgroundColor(theme.backgroundColor)
+                setSecondaryColor(theme.clockMinuteColor)
+                setPrimaryColor(theme.complicationColor)
             }
         }
 
@@ -172,10 +203,10 @@ class WatchFaceService : CanvasWatchFaceService() {
                 val pd = ProcessedData(
                         iconDrawable = data.icon
                                 ?.loadDrawable(this@WatchFaceService)
-                                ?.apply { setTint(complicationsPaint.color) },
+                                ?.apply { setTint(paintManager.normalPaint.complicationsPaint.color) },
                         ambientIconDrawable = data.burnInProtectionIcon
                                 ?.loadDrawable(this@WatchFaceService)
-                                ?.apply { setTint(complicationsPaint.color) },
+                                ?.apply { setTint(paintManager.normalPaint.complicationsPaint.color) },
                         raw = data
                 )
 
@@ -187,6 +218,8 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         override fun onDraw(canvas: Canvas, bounds: Rect) {
             super.onDraw(canvas, bounds)
+            val holder = paintManager.holder
+
             val is24Hour = DateFormat.is24HourFormat(this@WatchFaceService)
             val hh = formatTwoDigitNumber(if (is24Hour) {
                 calendar.get(Calendar.HOUR_OF_DAY)
@@ -202,25 +235,25 @@ class WatchFaceService : CanvasWatchFaceService() {
             val margin = 6 * density
             val itemSize = 20 * density
 
-            canvas.drawColor(backgroundColor)
+            canvas.drawColor(holder.backgroundColor)
 
             // Calculate the bounds of both hours
             // and minutes
             val hhBounds = Rect()
             val mmBounds = Rect()
             val tmpBounds = Rect()
-            hourPaint.getTextBounds(hh, 0, hh.length, hhBounds)
-            minutePaint.getTextBounds(mm, 0, mm.length, mmBounds)
+            holder.hourPaint.getTextBounds(hh, 0, hh.length, hhBounds)
+            holder.minutePaint.getTextBounds(mm, 0, mm.length, mmBounds)
 
             // Draw the clock
             canvas.drawText(hh,
                     bounds.exactCenterX() - margin,
                     bounds.exactCenterY() - margin,
-                    hourPaint)
+                    holder.hourPaint)
             canvas.drawText(mm,
                     bounds.exactCenterX() - margin,
                     bounds.exactCenterY() + mmBounds.height() + margin,
-                    minutePaint)
+                    holder.minutePaint)
 
             // Calculate the bounds of complications
             val complicationsCount = complicationDataSparse.size()
@@ -238,11 +271,11 @@ class WatchFaceService : CanvasWatchFaceService() {
                 }
 
                 value.text?.also {
-                    complicationsPaint.getTextBounds(it, 0, it.length, tmpBounds)
+                    holder.complicationsPaint.getTextBounds(it, 0, it.length, tmpBounds)
                     canvas.drawText(it, 0, it.length,
                             bounds.exactCenterX() + 3 * margin + itemSize,
                             bounds.exactCenterY() - complicationsBlockHeight / 2f + itemSize * (i + 1) + margin * i - (itemSize - tmpBounds.height()) / 2 - margin / 5,
-                            complicationsPaint)
+                            holder.complicationsPaint)
                 }
             }
         }
@@ -263,6 +296,72 @@ class WatchFaceService : CanvasWatchFaceService() {
             val ambientIconDrawable: Drawable?,
             var text: String? = null,
             val raw: ComplicationData
+    )
+
+    /**
+     * @author Artem Chepurnoy
+     */
+    class PaintManager(
+            val normalPaint: PaintHolder,
+            val ambientPaint: PaintHolder,
+            val callback: (PaintHolder, Int) -> Unit
+    ) {
+
+        companion object {
+            const val EVENT_BACKGROUND = 1
+            const val EVENT_ACCENT = 2
+            const val EVENT_PRIMARY = 4
+            const val EVENT_SECONDARY = 8
+
+            /** An event that contains all possible events */
+            private const val EVENT_ALL = EVENT_BACKGROUND or
+                    EVENT_ACCENT or
+                    EVENT_PRIMARY or
+                    EVENT_SECONDARY
+        }
+
+        var isAmbientMode = false
+            set(value) {
+                field = value
+                callback(holder, EVENT_ALL)
+            }
+
+        val holder: PaintHolder
+            get() = if (isAmbientMode) ambientPaint else normalPaint
+
+        /**
+         * Sets the background color of the watch face
+         */
+        fun setBackgroundColor(@ColorInt color: Int) {
+            normalPaint.backgroundColor = color
+            callback(holder, EVENT_BACKGROUND)
+        }
+
+        fun setAccentColor(@ColorInt color: Int) {
+            normalPaint.hourPaint.color = color
+            callback(holder, EVENT_ACCENT)
+        }
+
+        fun setPrimaryColor(@ColorInt color: Int) {
+            normalPaint.complicationsPaint.color = color
+            callback(holder, EVENT_PRIMARY)
+        }
+
+        fun setSecondaryColor(@ColorInt color: Int) {
+            normalPaint.minutePaint.color = color
+            callback(holder, EVENT_SECONDARY)
+        }
+
+    }
+
+    /**
+     * @author Artem Chepurnoy
+     */
+    class PaintHolder(
+            var backgroundColor: Int,
+            val hourPaint: Paint,
+            val minutePaint: Paint,
+            val complicationsPaint: Paint
     )
 
 }
