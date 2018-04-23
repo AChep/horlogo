@@ -2,6 +2,7 @@
     <string name="app_name">Horlogo</string>
     <string name="watchface_name">Horlogo</string>
 
+    <string name="config">Config</string>
     <string name="config_complications">Complications</string>
     <string name="config_complication_first_line">First line</string>
     <string name="config_complication_second_line">Second line</string>

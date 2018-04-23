@@ -16,9 +16,10 @@ import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
  * @author Artem Chepurnoy
  */
 open class ConfigPickerAdapter(
-        models: MutableList<ConfigPickerItem>
+        models: MutableList<ConfigPickerItem>,
+        title: CharSequence?
 ) :
-        AdapterBase<ConfigPickerItem, ConfigPickerAdapter.Holder>(models) {
+        AdapterTitled<ConfigPickerItem, ConfigPickerAdapter.Holder>(models, title) {
 
     var selectedKey: String? = null
 
@@ -38,14 +39,13 @@ open class ConfigPickerAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+    override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
         val v = inflater.inflate(R.layout.item_color, parent, false)
         return Holder(this, v)
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        val model = models[position]
+    override fun onBindItemViewHolder(holder: Holder, position: Int, model: ConfigPickerItem) {
         val colorIsDark = ColorUtils.calculateLuminance(model.color) < 0.5f
         val colorContent = if (colorIsDark) Color.WHITE else Color.BLACK
 

@@ -14,9 +14,10 @@ import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
  * @author Artem Chepurnoy
  */
 open class ConfigAdapter(
-        models: MutableList<ConfigItem>
+        models: MutableList<ConfigItem>,
+        title: CharSequence?
 ) :
-        AdapterBase<ConfigItem, ConfigAdapter.Holder>(models) {
+        AdapterTitled<ConfigItem, ConfigAdapter.Holder>(models, title) {
 
     /**
      * @author Artem Chepurnoy
@@ -35,15 +36,13 @@ open class ConfigAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+    override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
         val v = inflater.inflate(R.layout.item_config, parent, false)
         return Holder(this, v)
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        val model = models[position]
-
+    override fun onBindItemViewHolder(holder: Holder, position: Int, model: ConfigItem) {
         holder.apply {
             titleTextView.text = model.title
             summaryTextView.setTextExclusive(model.summary)

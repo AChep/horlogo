@@ -30,14 +30,17 @@ class ConfigComplicationsActivity : ActivityBase<IComplicationsView, IComplicati
 
     private val models = ArrayList<ConfigItem>()
 
-    private val adapter = ConfigAdapter(models).apply {
-        onItemClickListener = this@ConfigComplicationsActivity
-    }
+    private lateinit var adapter : ConfigAdapter
 
     override fun createPresenter() = ComplicationsPresenter(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val title = getString(R.string.config_complications)
+        adapter = ConfigAdapter(models, title).apply {
+            onItemClickListener = this@ConfigComplicationsActivity
+        }
+
         setContentView(R.layout.activity_config_complications)
         errorView.setOnClickListener(this)
         complicationsRecyclerView.apply {

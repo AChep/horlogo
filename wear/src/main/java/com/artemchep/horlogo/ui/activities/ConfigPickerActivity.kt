@@ -25,13 +25,15 @@ class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
 
     companion object {
         private const val EXTRA_KEY = "extra::key"
+        private const val EXTRA_TITLE = "extra::title"
         private const val EXTRA_ITEMS = "extra::items"
         const val RESULT_KEY = "result::key"
 
-        fun newIntent(context: Context, key: String, items: ArrayList<ConfigPickerItem>): Intent {
+        fun newIntent(context: Context, key: String, title: String?, items: ArrayList<ConfigPickerItem>): Intent {
             return Intent(context, ConfigPickerActivity::class.java).apply {
                 putParcelableArrayListExtra(EXTRA_ITEMS, items)
                 putExtra(EXTRA_KEY, key)
+                putExtra(EXTRA_TITLE, title)
             }
         }
     }
@@ -40,9 +42,7 @@ class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
 
     private val models = ArrayList<ConfigPickerItem>()
 
-    private val adapter = ConfigPickerAdapter(models).apply {
-        onItemClickListener = this@ConfigPickerActivity
-    }
+    private lateinit var adapter: ConfigPickerAdapter
 
     override fun createPresenter(): IPickerPresenter {
         val key = intent!!.getStringExtra(EXTRA_KEY)
@@ -52,6 +52,11 @@ class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val title = intent!!.getStringExtra(EXTRA_TITLE)
+        adapter = ConfigPickerAdapter(models, title).apply {
+            onItemClickListener = this@ConfigPickerActivity
+        }
 
         setContentView(R.layout.activity_config)
         recyclerView.apply {

@@ -92,7 +92,8 @@ class ConfigActivity : Activity(), OnItemClickListener<ConfigItem> {
             put(Color.WHITE, getString(R.string.white))
         }
 
-        adapter = ConfigAdapter(items).apply {
+        val title = getString(R.string.config)
+        adapter = ConfigAdapter(items, title).apply {
             onItemClickListener = this@ConfigActivity
         }
 
@@ -163,6 +164,7 @@ class ConfigActivity : Activity(), OnItemClickListener<ConfigItem> {
             ITEM_THEME -> {
                 val intent = ConfigPickerActivity.newIntent(this,
                         Config.themeName,
+                        getString(R.string.config_theme),
                         Theme.values()
                                 .map { ConfigPickerItem(it.name, it.backgroundColor, themeMap[it.name]!!) }
                                 .let {
@@ -174,6 +176,7 @@ class ConfigActivity : Activity(), OnItemClickListener<ConfigItem> {
             ITEM_ACCENT_COLOR -> {
                 val intent = ConfigPickerActivity.newIntent(this,
                         Config.accentColor.toString(),
+                        getString(R.string.config_accent),
                         Palette.PALETTE
                                 .map { ConfigPickerItem(it.toString(), it, colorSparse[it]) }
                                 .let {
