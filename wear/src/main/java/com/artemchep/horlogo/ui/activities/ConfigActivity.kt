@@ -9,12 +9,12 @@ import android.util.SparseArray
 import android.view.View
 import com.artemchep.horlogo.Config
 import com.artemchep.horlogo.R
-import com.artemchep.horlogo.model.ConfigItem
-import com.artemchep.horlogo.model.ConfigPickerItem
 import com.artemchep.horlogo.ui.Palette
 import com.artemchep.horlogo.ui.Theme
 import com.artemchep.horlogo.ui.adapter.ConfigAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
+import com.artemchep.horlogo.ui.model.ConfigItem
+import com.artemchep.horlogo.ui.model.ConfigPickerItem
 import com.artemchep.horlogo.util.ConfigManager
 import kotlinx.android.synthetic.main.activity_config.*
 

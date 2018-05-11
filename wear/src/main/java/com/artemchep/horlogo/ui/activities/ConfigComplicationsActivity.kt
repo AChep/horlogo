@@ -9,11 +9,11 @@ import android.view.View
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IComplicationsPresenter
 import com.artemchep.horlogo.contracts.IComplicationsView
-import com.artemchep.horlogo.model.ConfigItem
 import com.artemchep.horlogo.presenters.ComplicationsPresenter
 import com.artemchep.horlogo.ui.activities.base.ActivityBase
 import com.artemchep.horlogo.ui.adapter.ConfigAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
+import com.artemchep.horlogo.ui.model.ConfigItem
 import com.artemchep.horlogo.ui.watchface.WatchFaceService
 import kotlinx.android.synthetic.main.activity_config_complications.*
 

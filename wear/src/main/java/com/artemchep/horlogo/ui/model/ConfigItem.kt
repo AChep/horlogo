@@ -1,4 +1,4 @@
-package com.artemchep.horlogo.model
+package com.artemchep.horlogo.ui.model
 
 import android.graphics.drawable.Drawable
 

@@ -2,7 +2,7 @@ package com.artemchep.horlogo.contracts
 
 import com.artemchep.horlogo.IPresenter
 import com.artemchep.horlogo.IView
-import com.artemchep.horlogo.model.ConfigItem
+import com.artemchep.horlogo.ui.model.ConfigItem
 
 /**
  * @author Artem Chepurnoy

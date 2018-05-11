@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.artemchep.horlogo.R
-import com.artemchep.horlogo.model.ConfigPickerItem
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
+import com.artemchep.horlogo.ui.model.ConfigPickerItem
 
 /**
  * @author Artem Chepurnoy

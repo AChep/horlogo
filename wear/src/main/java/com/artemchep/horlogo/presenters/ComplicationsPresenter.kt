@@ -8,7 +8,7 @@ import android.util.SparseBooleanArray
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IComplicationsPresenter
 import com.artemchep.horlogo.contracts.IComplicationsView
-import com.artemchep.horlogo.model.ConfigItem
+import com.artemchep.horlogo.ui.model.ConfigItem
 import com.artemchep.horlogo.ui.watchface.WatchFaceService
 import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATIONS
 import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATION_FIRST

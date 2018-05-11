@@ -7,8 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.extensions.setTextExclusive
-import com.artemchep.horlogo.model.ConfigItem
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
+import com.artemchep.horlogo.ui.model.ConfigItem
 
 /**
  * @author Artem Chepurnoy

@@ -2,7 +2,7 @@ package com.artemchep.horlogo.contracts
 
 import com.artemchep.horlogo.IPresenter
 import com.artemchep.horlogo.IView
-import com.artemchep.horlogo.model.ConfigPickerItem
+import com.artemchep.horlogo.ui.model.ConfigPickerItem
 
 /**
  * @author Artem Chepurnoy

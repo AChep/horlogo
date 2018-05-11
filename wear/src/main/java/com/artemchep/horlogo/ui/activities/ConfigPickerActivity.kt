@@ -8,11 +8,11 @@ import android.view.View
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IPickerPresenter
 import com.artemchep.horlogo.contracts.IPickerView
-import com.artemchep.horlogo.model.ConfigPickerItem
 import com.artemchep.horlogo.presenters.PickerPresenter
 import com.artemchep.horlogo.ui.activities.base.ActivityBase
 import com.artemchep.horlogo.ui.adapter.ConfigPickerAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
+import com.artemchep.horlogo.ui.model.ConfigPickerItem
 import kotlinx.android.synthetic.main.activity_config.*
 
 
