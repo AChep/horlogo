@@ -131,12 +131,17 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
     /**
      * @author Artem Chepurnoy
      */
-    private class ComplicationProviderInfoBucket : ProviderInfoRetriever.OnProviderInfoReceivedCallback {
+    private class ComplicationProviderInfoBucket(
+            private var callback: Callback?,
+            vararg ids: Int)
+        : ProviderInfoRetriever.OnProviderInfoReceivedCallback() {
 
-        private var callback: Callback?
-
-        private val data: MutableList<Data>
-        private val check: SparseBooleanArray
+        private val data = ArrayList<Data>()
+        private val check = SparseBooleanArray().apply {
+            ids.forEach {
+                put(it, false)
+            }
+        }
 
         /**
          * @author Artem Chepurnoy
@@ -147,17 +152,6 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
 
             fun onRetrievalFailed()
 
-        }
-
-        constructor(callback: Callback, vararg ids: Int) : super() {
-            this.callback = callback
-
-            data = ArrayList()
-            check = SparseBooleanArray()
-
-            ids.forEach {
-                check.put(it, false)
-            }
         }
 
         override fun onProviderInfoReceived(watchFaceComplicationId: Int, info: ComplicationProviderInfo?) {

@@ -10,9 +10,9 @@ import android.text.format.DateFormat
 import android.util.Log
 import android.util.SparseArray
 import android.view.SurfaceHolder
+import androidx.core.util.forEach
 import com.artemchep.horlogo.Config
 import com.artemchep.horlogo.extensions.contains
-import com.artemchep.horlogo.extensions.forEachIndexed
 import com.artemchep.horlogo.util.ConfigManager
 import com.artemchep.horlogo.util.TimezoneManager
 import java.util.*
@@ -121,7 +121,7 @@ class WatchFaceService : CanvasWatchFaceService() {
                     { holder, event ->
                         if (event contains PaintManager.EVENT_PRIMARY) {
                             // Refresh the tint color of icons
-                            complicationDataSparse.forEachIndexed { _, value ->
+                            complicationDataSparse.forEach { _, value ->
                                 value.ambientIconDrawable?.setTint(holder.complicationsPaint.color)
                                 value.iconDrawable?.setTint(holder.complicationsPaint.color)
                             }
@@ -181,7 +181,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             val now = System.currentTimeMillis()
             calendar.timeInMillis = now
 
-            complicationDataSparse.forEachIndexed { _, value ->
+            complicationDataSparse.forEach { _, value ->
                 val shortText = value.raw.shortText?.getText(this@WatchFaceService, now)
                 val shortTitle = value.raw.shortTitle?.getText(this@WatchFaceService, now)
 
@@ -259,7 +259,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             val complicationsCount = complicationDataSparse.size()
             val complicationsBlockHeight = complicationsCount * itemSize + max(complicationsCount - 1, 0) * margin
 
-            complicationDataSparse.forEachIndexed { i, value ->
+            complicationDataSparse.forEach { i, value ->
                 value.iconDrawable?.apply {
                     setBounds(
                             (bounds.exactCenterX() + 2 * margin).toInt(),

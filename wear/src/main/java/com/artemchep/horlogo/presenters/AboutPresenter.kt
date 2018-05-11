@@ -2,11 +2,11 @@ package com.artemchep.horlogo.presenters
 
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.core.text.parseAsHtml
 import com.artemchep.horlogo.BuildConfig
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IAboutPresenter
 import com.artemchep.horlogo.contracts.IAboutView
-import com.artemchep.horlogo.util.fromHtml
 
 
 /**
@@ -38,13 +38,11 @@ class AboutPresenter(private val context: Context) : IAboutPresenter {
             "N/A"
         }
 
-        val src = context.getString(R.string.about_title, appName, versionName)
-        return fromHtml(src)
+        return context.getString(R.string.about_title, appName, versionName).parseAsHtml()
     }
 
     private fun getContentText(): CharSequence {
-        val src = context.getString(R.string.about_content, BuildConfig.MY_TIME_YEAR)
-        return fromHtml(src)
+        return context.getString(R.string.about_content, BuildConfig.MY_TIME_YEAR).parseAsHtml()
     }
 
     override fun showBuildInfo() {

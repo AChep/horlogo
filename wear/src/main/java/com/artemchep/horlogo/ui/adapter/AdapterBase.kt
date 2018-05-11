@@ -8,16 +8,16 @@ import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
  * @author Artem Chepurnoy
  */
 abstract class AdapterBase<M, H : RecyclerView.ViewHolder>(
-        protected val models : MutableList<M>
+        protected val models: MutableList<M>
 ) : RecyclerView.Adapter<H>(), OnItemClickListener<Int> {
 
     var onItemClickListener: OnItemClickListener<M>? = null
 
-    override fun getItemCount(): Int = models.size
-
     override fun onItemClick(view: View, model: Int) {
         onItemClickListener?.onItemClick(view, models[model])
     }
+
+    override fun getItemCount(): Int = models.size
 
     /**
      * @author Artem Chepurnoy

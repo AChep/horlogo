@@ -61,7 +61,7 @@ abstract class AdapterTitled<M, H : RecyclerView.ViewHolder>(
         }
     }
 
-    abstract fun onBindItemViewHolder(holder: H, position: Int, model : M)
+    abstract fun onBindItemViewHolder(holder: H, position: Int, model: M)
 
     override fun onItemClick(view: View, model: Int) {
         onItemClickListener?.onItemClick(view, models[model - offset])

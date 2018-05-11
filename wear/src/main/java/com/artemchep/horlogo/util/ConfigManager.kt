@@ -11,6 +11,9 @@ import com.artemchep.horlogo.ACTION_CONFIG_CHANGED
 typealias ConfigCallback = () -> Unit
 
 /**
+ * Listens to the config-changed events and invokes the
+ * callback.
+ *
  * @author Artem Chepurnoy
  */
 class ConfigManager(private val context: Context) {

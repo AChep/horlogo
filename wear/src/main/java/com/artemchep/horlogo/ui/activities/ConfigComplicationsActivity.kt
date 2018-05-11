@@ -30,7 +30,7 @@ class ConfigComplicationsActivity : ActivityBase<IComplicationsView, IComplicati
 
     private val models = ArrayList<ConfigItem>()
 
-    private lateinit var adapter : ConfigAdapter
+    private lateinit var adapter: ConfigAdapter
 
     override fun createPresenter() = ComplicationsPresenter(applicationContext)
 

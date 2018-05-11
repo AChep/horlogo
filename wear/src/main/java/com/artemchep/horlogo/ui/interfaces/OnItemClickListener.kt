@@ -7,6 +7,6 @@ import android.view.View
  */
 interface OnItemClickListener<in T> {
 
-    fun onItemClick(view : View, model: T)
+    fun onItemClick(view: View, model: T)
 
 }
