@@ -10,7 +10,7 @@ import com.artemchep.horlogo.contracts.IPickerPresenter
 import com.artemchep.horlogo.contracts.IPickerView
 import com.artemchep.horlogo.presenters.PickerPresenter
 import com.artemchep.horlogo.ui.activities.base.ActivityBase
-import com.artemchep.horlogo.ui.adapter.ConfigPickerAdapter
+import com.artemchep.horlogo.ui.adapter.PickerAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
 import com.artemchep.horlogo.ui.model.ConfigPickerItem
 import kotlinx.android.synthetic.main.activity_config.*
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_config.*
 /**
  * @author Artem Chepurnoy
  */
-class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
+class PickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
         IPickerView,
         OnItemClickListener<ConfigPickerItem> {
 
@@ -30,7 +30,7 @@ class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
         const val RESULT_KEY = "result::key"
 
         fun newIntent(context: Context, key: String, title: String?, items: ArrayList<ConfigPickerItem>): Intent {
-            return Intent(context, ConfigPickerActivity::class.java).apply {
+            return Intent(context, PickerActivity::class.java).apply {
                 putParcelableArrayListExtra(EXTRA_ITEMS, items)
                 putExtra(EXTRA_KEY, key)
                 putExtra(EXTRA_TITLE, title)
@@ -42,7 +42,7 @@ class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
 
     private val models = ArrayList<ConfigPickerItem>()
 
-    private lateinit var adapter: ConfigPickerAdapter
+    private lateinit var adapter: PickerAdapter
 
     override fun createPresenter(): IPickerPresenter {
         val key = intent!!.getStringExtra(EXTRA_KEY)
@@ -54,16 +54,16 @@ class ConfigPickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
         super.onCreate(savedInstanceState)
 
         val title = intent!!.getStringExtra(EXTRA_TITLE)
-        adapter = ConfigPickerAdapter(models, title).apply {
-            onItemClickListener = this@ConfigPickerActivity
+        adapter = PickerAdapter(models, title).apply {
+            onItemClickListener = this@PickerActivity
         }
 
         setContentView(R.layout.activity_config)
         recyclerView.apply {
             isEdgeItemsCenteringEnabled = true
-            layoutManager = LinearLayoutManager(this@ConfigPickerActivity)
+            layoutManager = LinearLayoutManager(this@PickerActivity)
 
-            adapter = this@ConfigPickerActivity.adapter
+            adapter = this@PickerActivity.adapter
         }
     }
 

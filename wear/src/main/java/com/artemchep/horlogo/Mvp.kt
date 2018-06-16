@@ -17,7 +17,7 @@ interface IPresenter<P : IPresenter<P, V>, V : IView<V, P>> {
     var view: V?
 
     /**
-     * Called every time the view starts, the view is guarantee to be not null starting at this
+     * Called every time the view starts, the view is guaranteed to be not null starting at this
      * method, until [onStop] is called.
      */
     fun onStart() {

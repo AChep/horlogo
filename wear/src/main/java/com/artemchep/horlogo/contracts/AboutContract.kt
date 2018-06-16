@@ -2,17 +2,22 @@ package com.artemchep.horlogo.contracts
 
 import com.artemchep.horlogo.IPresenter
 import com.artemchep.horlogo.IView
+import com.artemchep.horlogo.interfaces.Toastable
 
 /**
  * @author Artem Chepurnoy
  */
-interface IAboutView : IView<IAboutView, IAboutPresenter> {
+interface IAboutView : IView<IAboutView, IAboutPresenter>, Toastable {
 
+    /**
+     * Sets the title text.
+     */
     fun setTitleText(title: CharSequence)
 
+    /**
+     * Sets the content text.
+     */
     fun setContentText(content: CharSequence)
-
-    fun showToast(text: CharSequence)
 
 }
 
@@ -21,6 +26,13 @@ interface IAboutView : IView<IAboutView, IAboutPresenter> {
  */
 interface IAboutPresenter : IPresenter<IAboutPresenter, IAboutView> {
 
-    fun showBuildInfo()
+    fun navigateTo(dst: Destination)
+
+    /**
+     * @author Artem Chepurnoy
+     */
+    enum class Destination {
+        BUILD_INFO,
+    }
 
 }

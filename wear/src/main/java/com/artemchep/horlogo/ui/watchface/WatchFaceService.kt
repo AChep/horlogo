@@ -1,24 +1,28 @@
 package com.artemchep.horlogo.ui.watchface
 
-import android.content.res.AssetManager
-import android.graphics.*
-import android.graphics.drawable.Drawable
-import android.support.annotation.ColorInt
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Rect
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.watchface.CanvasWatchFaceService
-import android.text.format.DateFormat
-import android.util.Log
+import android.support.wearable.watchface.WatchFaceService
+import android.support.wearable.watchface.WatchFaceStyle
 import android.util.SparseArray
+import android.view.LayoutInflater
 import android.view.SurfaceHolder
+import android.view.View
 import androidx.core.util.forEach
+import com.artemchep.config.ConfigBase
 import com.artemchep.horlogo.Config
-import com.artemchep.horlogo.extensions.contains
-import com.artemchep.horlogo.util.ConfigManager
+import com.artemchep.horlogo.R
+import com.artemchep.horlogo.extensions.findViewByLocation
+import com.artemchep.horlogo.ui.model.Theme
 import com.artemchep.horlogo.util.TimezoneManager
+import kotlinx.coroutines.experimental.ThreadPoolDispatcher
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.newSingleThreadContext
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.math.max
-
 
 /**
  * @author Artem Chepurnoy
@@ -27,9 +31,6 @@ class WatchFaceService : CanvasWatchFaceService() {
 
     companion object {
         private const val TAG = "WatchFaceService"
-
-        private val TYPEFACE_LIGHT = Typeface.create("sans-serif-light", Typeface.NORMAL)
-        private val TYPEFACE_MEDIUM = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
 
         const val COMPLICATION_FIRST = 101
         const val COMPLICATION_SECOND = 102
@@ -45,17 +46,6 @@ class WatchFaceService : CanvasWatchFaceService() {
                 COMPLICATION_SECOND,
                 COMPLICATION_THIRD,
                 COMPLICATION_FOURTH)
-
-        private val FONTS = HashMap<String, Typeface>()
-
-        fun getTypeface(assetManager: AssetManager, name: String): Typeface {
-            return FONTS[name]
-                    ?: Typeface
-                            .createFromAsset(assetManager, "fonts/$name.ttf")
-                            .also {
-                                FONTS[name] = it
-                            }
-        }
     }
 
     override fun onCreateEngine() = WatchFaceEngine()
@@ -63,117 +53,171 @@ class WatchFaceService : CanvasWatchFaceService() {
     /**
      * @author Artem Chepurnoy
      */
-    open inner class WatchFaceEngine : CanvasWatchFaceService.Engine() {
+    open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(), ConfigBase.OnConfigChangedListener {
+
+        private lateinit var view: WatchFaceView
 
         private lateinit var timeZoneManager: TimezoneManager
-        private lateinit var configManager: ConfigManager
+
+        private lateinit var theme: Theme
+
+        /**
+         * Ambient theme used when in ambient mode.
+         */
+        private val themeAmbient = Theme(
+                backgroundColor = Color.BLACK,
+                clockHourColor = Color.WHITE,
+                clockMinuteColor = Color.GRAY,
+                complicationColor = Color.LTGRAY
+        )
+
+        private var configRegistration: ConfigBase.ConfigRegistration? = null
 
         private val calendar = Calendar.getInstance()
 
+        /** Surface width */
+        private var width = 0
+        /** Surface height */
+        private var height = 0
+
         /** Maps complication ids to corresponding complications data */
-        private val complicationDataSparse = SparseArray<ProcessedData>()
+        private val complicationDataSparse = SparseArray<Complication>()
 
-        /** Density of the screen */
-        private var density: Float = resources.displayMetrics.density
-
-        //
-        // PAINTS
-        //
-
-        private val paintManager: PaintManager
-
-        init {
-            val hourPaint = Paint().apply {
-                color = Color.WHITE
-                textSize = 110f
-                textScaleX = 0.92f
-                textAlign = Paint.Align.RIGHT
-                isAntiAlias = true
-                typeface = getTypeface(assets, "Overlock-Regular")
-            }
-
-            val minutePaint = Paint(hourPaint).apply {
-                color = Color.GRAY
-            }
-
-            val complicationsPaint = Paint().apply {
-                color = Color.LTGRAY
-                textSize = 23f
-                typeface = TYPEFACE_MEDIUM
-                isAntiAlias = true
-            }
-
-            paintManager = PaintManager(
-                    PaintHolder(Color.BLACK, hourPaint, minutePaint, complicationsPaint),
-                    // Ambient mode paint; does not change over time
-                    PaintHolder(
-                            Color.BLACK,
-                            Paint(hourPaint).apply {
-                                isAntiAlias = false
-                            },
-                            Paint(minutePaint).apply {
-                                isAntiAlias = false
-                            },
-                            Paint(complicationsPaint).apply {
-                                isAntiAlias = false
-                            }
-                    ),
-                    { holder, event ->
-                        if (event contains PaintManager.EVENT_PRIMARY) {
-                            // Refresh the tint color of icons
-                            complicationDataSparse.forEach { _, value ->
-                                value.ambientIconDrawable?.setTint(holder.complicationsPaint.color)
-                                value.iconDrawable?.setTint(holder.complicationsPaint.color)
-                            }
-                        }
-                    }
-            )
-
-        }
+        private lateinit var iconLoaderDispatcher: ThreadPoolDispatcher
 
         override fun onCreate(holder: SurfaceHolder?) {
             super.onCreate(holder)
             val context = applicationContext
             timeZoneManager = TimezoneManager(context)
-            configManager = ConfigManager(context)
+            iconLoaderDispatcher = newSingleThreadContext(TAG)
 
             setActiveComplications(*COMPLICATIONS)
-        }
+            setWatchFaceStyle(WatchFaceStyle.Builder(this@WatchFaceService)
+                    .setAcceptsTapEvents(true)
+                    .build())
 
-        override fun onAmbientModeChanged(inAmbientMode: Boolean) {
-            super.onAmbientModeChanged(inAmbientMode)
-            paintManager.isAmbientMode = inAmbientMode
+            val layoutName = Config.layoutName
+            val layoutRes = when (layoutName) {
+                Config.LAYOUT_HORIZONTAL -> R.layout.watch_face_horizontal
+                else -> R.layout.watch_face
+            }
+
+            view = LayoutInflater
+                    .from(this@WatchFaceService)
+                    .inflate(layoutRes, null, false)
+                    .let { it as WatchFaceView }
+                    .apply {
+                        // Set the layout name as a tag
+                        tag = layoutName
+                    }
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
             super.onVisibilityChanged(visible)
+            // Unregister previous config listener,
+            // if registered.
+            configRegistration?.unregister()
+
             if (visible) {
-                configManager.start {
-                    loadConfig()
-                }
-
-                loadConfig()
-
+                configRegistration = Config.addListener(this)
                 timeZoneManager.start {
                     calendar.timeZone = TimeZone.getDefault()
                     onTimeTick()
                 }
 
+                // Load the config and
+                // update the time
+
+                if (view.tag as String? != Config.layoutName) {
+                    // Update the theme model and
+                    // reload the whole view
+                    loadThemeFromConfig()
+                    updateLayoutFromConfig()
+                } else {
+                    // Reload only a theme and an
+                    // accent color
+                    updateThemeFromConfig()
+                }
+
                 onTimeTick()
             } else {
-                configManager.stop()
                 timeZoneManager.stop()
             }
         }
 
-        private fun loadConfig() {
-            val theme = Config.theme
-            paintManager.apply {
-                setAccentColor(Config.accentColor)
-                setBackgroundColor(theme.backgroundColor)
-                setSecondaryColor(theme.clockMinuteColor)
-                setPrimaryColor(theme.complicationColor)
+        override fun onConfigChanged(key: String) {
+            when (key) {
+                Config.KEY_LAYOUT -> updateLayoutFromConfig()
+                Config.KEY_THEME -> updateThemeFromConfig()
+                Config.KEY_ACCENT_COLOR -> updateThemeAccentColorFromConfig()
+                else -> return
             }
+
+            // Request a redraw
+            invalidate()
+        }
+
+        private fun updateLayoutFromConfig() {
+            val layoutName = Config.layoutName
+            val layoutRes = when (layoutName) {
+                Config.LAYOUT_HORIZONTAL -> R.layout.watch_face_horizontal
+                else -> R.layout.watch_face
+            }
+
+            view = LayoutInflater
+                    .from(this@WatchFaceService)
+                    .inflate(layoutRes, null, false)
+                    .let { it as WatchFaceView }
+                    .apply {
+                        setAntiAlias(!isInAmbientMode)
+                        setTime(calendar)
+
+                        // Set complications
+                        complicationDataSparse.forEach { key, value ->
+                            val text = value.run { longMsg ?: shortMsg }
+                            val icon = value.run {
+                                // Return the ambient icon if not null & in ambient mode, or
+                                // normal one.
+                                ambientIconDrawable
+                                        ?.takeIf { isInAmbientMode }
+                                        ?: normalIconDrawable
+                            }
+
+                            setComplicationContentText(key, text)
+                            setComplicationIcon(key, icon)
+                        }
+
+                        // Set the layout name as a tag
+                        tag = layoutName
+                    }
+
+            bindTheme()
+        }
+
+        private fun updateThemeFromConfig() {
+            // Load the theme from config and apply
+            // the accent color.
+            loadThemeFromConfig()
+
+            // Bind to view
+            bindTheme()
+        }
+
+        private fun loadThemeFromConfig() {
+            theme = when (Config.themeName) {
+                Config.THEME_BLACK -> Theme.BLACK
+                Config.THEME_DARK -> Theme.DARK
+                Config.THEME_LIGHT -> Theme.LIGHT
+                else -> throw IllegalArgumentException()
+            }.copy(clockHourColor = Config.accentColor)
+        }
+
+        private fun updateThemeAccentColorFromConfig() {
+            // Apply the accent color.
+            theme.clockHourColor = Config.accentColor
+
+            // Bind to view
+            bindTheme()
         }
 
         override fun onTimeTick() {
@@ -181,187 +225,166 @@ class WatchFaceService : CanvasWatchFaceService() {
             val now = System.currentTimeMillis()
             calendar.timeInMillis = now
 
-            complicationDataSparse.forEach { _, value ->
-                val shortText = value.raw.shortText?.getText(this@WatchFaceService, now)
-                val shortTitle = value.raw.shortTitle?.getText(this@WatchFaceService, now)
+            view!!.setTime(calendar)
 
-                value.text = if (shortText != null || shortTitle != null) {
-                    "${shortText ?: ""} ${shortTitle ?: ""}"
-                } else null
+            complicationDataSparse.forEach { id, value ->
+                if (value.raw.isTimeDependent) {
+                    value.refreshMessage(this@WatchFaceService)
+                    value.refreshActive()
+
+                    bindComplicationContentText(id, value)
+                }
             }
 
             invalidate()
         }
 
-        override fun onComplicationDataUpdate(watchFaceComplicationId: Int, data: ComplicationData?) {
-            super.onComplicationDataUpdate(watchFaceComplicationId, data)
-            Log.d(TAG, "Complication data update: id=$watchFaceComplicationId, data=$data")
+        override fun onAmbientModeChanged(inAmbientMode: Boolean) {
+            super.onAmbientModeChanged(inAmbientMode)
+            view.setAntiAlias(!inAmbientMode)
 
-            if (data == null || (data.shortText == null && data.shortTitle == null)) {
-                complicationDataSparse.remove(watchFaceComplicationId)
-            } else {
-                val pd = ProcessedData(
-                        iconDrawable = data.icon
-                                ?.loadDrawable(this@WatchFaceService)
-                                ?.apply { setTint(paintManager.normalPaint.complicationsPaint.color) },
-                        ambientIconDrawable = data.burnInProtectionIcon
-                                ?.loadDrawable(this@WatchFaceService)
-                                ?.apply { setTint(paintManager.normalPaint.complicationsPaint.color) },
-                        raw = data
-                )
-
-                complicationDataSparse.put(watchFaceComplicationId, pd)
+            // Bind every complication icon, to apply the ambient mode icons
+            // if needed.
+            complicationDataSparse.forEach { id, complication ->
+                bindComplicationIcon(id, complication)
             }
 
-            onTimeTick()
+            // Update the theme
+            bindTheme()
+
+            // Post redraw on next
+            // frame
+            invalidate()
+        }
+
+        override fun onComplicationDataUpdate(watchFaceComplicationId: Int, data: ComplicationData?) {
+            super.onComplicationDataUpdate(watchFaceComplicationId, data)
+            if (data == null
+                    || (data.shortText == null && data.shortTitle == null
+                            && data.longText == null && data.longTitle == null)) {
+                complicationDataSparse.remove(watchFaceComplicationId)
+                view.apply {
+                    setComplicationIcon(watchFaceComplicationId, null)
+                    setComplicationContentText(watchFaceComplicationId, null)
+                }
+            } else {
+                val complication = Complication(raw = data).apply {
+                    refreshMessage(this@WatchFaceService)
+                    refreshActive()
+                }
+
+                launch(iconLoaderDispatcher) {
+                    val normalIcon = data.icon?.loadDrawable(this@WatchFaceService)
+                    val ambientIcon = data.burnInProtectionIcon?.loadDrawable(this@WatchFaceService)
+
+                    launch(UI) {
+                        complication.normalIconDrawable = normalIcon
+                        complication.ambientIconDrawable = ambientIcon
+
+                        // Set the icon
+                        bindComplicationIcon(watchFaceComplicationId, complication)
+                        invalidate()
+                    }
+                }
+
+                complicationDataSparse.put(watchFaceComplicationId, complication)
+                view.apply {
+                    setComplicationIcon(watchFaceComplicationId, null)
+                    bindComplicationContentText(watchFaceComplicationId, complication)
+                }
+            }
+
+            // Post redraw on next
+            // frame
+            invalidate()
+        }
+
+        /**
+         * Binds complication icon to the [view].
+         * @see bindComplicationContentText
+         */
+        private fun bindComplicationIcon(id: Int, complication: Complication?) {
+            val icon = complication?.run {
+                // Return the ambient icon if not null & in ambient mode, or
+                // normal one.
+                ambientIconDrawable
+                        ?.takeIf { isInAmbientMode }
+                        ?: normalIconDrawable
+            }
+
+            view.setComplicationIcon(id, icon)
+        }
+
+        /**
+         * Binds complication content text to the [view].
+         * @see bindComplicationIcon
+         */
+        private fun bindComplicationContentText(id: Int, complication: Complication?) {
+            val text = complication?.run {
+                return@run if (isActive) {
+                    longMsg ?: shortMsg
+                } else null
+            }
+
+            view.setComplicationContentText(id, text)
+        }
+
+        /**
+         * Binds [theme] (or [themeAmbient] if we are in the ambient mode)
+         * to current view.
+         */
+        private fun bindTheme() {
+            view.setTheme(if (isInAmbientMode) themeAmbient else theme)
+        }
+
+        override fun onSurfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+            super.onSurfaceChanged(holder, format, width, height)
+            this.width = width
+            this.height = height
+            performViewLayout()
+        }
+
+        /**
+         * Calls [view]'s [measure][View.measure] and [layout][View.layout] methods,
+         * to position its children in place.
+         */
+        private fun performViewLayout() {
+            val measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
+            val measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+
+            view.apply {
+                measure(measuredWidth, measuredHeight)
+                layout(0, 0, this.measuredWidth, this.measuredHeight)
+            }
         }
 
         override fun onDraw(canvas: Canvas, bounds: Rect) {
             super.onDraw(canvas, bounds)
-            val holder = paintManager.holder
-
-            val is24Hour = DateFormat.is24HourFormat(this@WatchFaceService)
-            val hh = formatTwoDigitNumber(if (is24Hour) {
-                calendar.get(Calendar.HOUR_OF_DAY)
-            } else {
-                var hour = calendar.get(Calendar.HOUR)
-                if (hour == 0) {
-                    hour = 12
-                }
-                hour
-            })
-            val mm = formatTwoDigitNumber(calendar.get(Calendar.MINUTE))
-
-            val margin = 6 * density
-            val itemSize = 20 * density
-
-            canvas.drawColor(holder.backgroundColor)
-
-            // Calculate the bounds of both hours
-            // and minutes
-            val hhBounds = Rect()
-            val mmBounds = Rect()
-            val tmpBounds = Rect()
-            holder.hourPaint.getTextBounds(hh, 0, hh.length, hhBounds)
-            holder.minutePaint.getTextBounds(mm, 0, mm.length, mmBounds)
-
-            // Draw the clock
-            canvas.drawText(hh,
-                    bounds.exactCenterX() - margin,
-                    bounds.exactCenterY() - margin,
-                    holder.hourPaint)
-            canvas.drawText(mm,
-                    bounds.exactCenterX() - margin,
-                    bounds.exactCenterY() + mmBounds.height() + margin,
-                    holder.minutePaint)
-
-            // Calculate the bounds of complications
-            val complicationsCount = complicationDataSparse.size()
-            val complicationsBlockHeight = complicationsCount * itemSize + max(complicationsCount - 1, 0) * margin
-
-            complicationDataSparse.forEach { i, value ->
-                value.iconDrawable?.apply {
-                    setBounds(
-                            (bounds.exactCenterX() + 2 * margin).toInt(),
-                            (bounds.exactCenterY() - complicationsBlockHeight / 2f + itemSize * i + margin * i).toInt(),
-                            (bounds.exactCenterX() + 2 * margin + itemSize).toInt(),
-                            (bounds.exactCenterY() - complicationsBlockHeight / 2f + itemSize * (i + 1) + margin * i).toInt()
-                    )
-                    draw(canvas)
-                }
-
-                value.text?.also {
-                    holder.complicationsPaint.getTextBounds(it, 0, it.length, tmpBounds)
-                    canvas.drawText(it, 0, it.length,
-                            bounds.exactCenterX() + 3 * margin + itemSize,
-                            bounds.exactCenterY() - complicationsBlockHeight / 2f + itemSize * (i + 1) + margin * i - (itemSize - tmpBounds.height()) / 2 - margin / 5,
-                            holder.complicationsPaint)
-                }
+            view.apply {
+                if (isLayoutRequested) performViewLayout()
+                draw(canvas)
             }
         }
 
-        /**
-         * Formats number as two-digit number: adds leading zero if
-         * needed.
-         */
-        private fun formatTwoDigitNumber(n: Int) = if (n <= 9) "0$n" else "$n"
-
-    }
-
-    /**
-     * @author Artem Chepurnoy
-     */
-    data class ProcessedData(
-            val iconDrawable: Drawable?,
-            val ambientIconDrawable: Drawable?,
-            var text: String? = null,
-            val raw: ComplicationData
-    )
-
-    /**
-     * @author Artem Chepurnoy
-     */
-    class PaintManager(
-            val normalPaint: PaintHolder,
-            val ambientPaint: PaintHolder,
-            val callback: (PaintHolder, Int) -> Unit
-    ) {
-
-        companion object {
-            const val EVENT_BACKGROUND = 1
-            const val EVENT_ACCENT = 2
-            const val EVENT_PRIMARY = 4
-            const val EVENT_SECONDARY = 8
-
-            /** An event that contains all possible events */
-            private const val EVENT_ALL = EVENT_BACKGROUND or
-                    EVENT_ACCENT or
-                    EVENT_PRIMARY or
-                    EVENT_SECONDARY
-        }
-
-        var isAmbientMode = false
-            set(value) {
-                field = value
-                callback(holder, EVENT_ALL)
+        override fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long) {
+            super.onTapCommand(tapType, x, y, eventTime)
+            if (tapType != WatchFaceService.TAP_TYPE_TAP) {
+                return
             }
 
-        val holder: PaintHolder
-            get() = if (isAmbientMode) ambientPaint else normalPaint
-
-        /**
-         * Sets the background color of the watch face
-         */
-        fun setBackgroundColor(@ColorInt color: Int) {
-            normalPaint.backgroundColor = color
-            callback(holder, EVENT_BACKGROUND)
+            val target = view.findViewByLocation(x, y)
+            target?.tag?.let { it as? Int }?.also { id ->
+                complicationDataSparse[id]?.raw?.tapAction?.send()
+            }
         }
 
-        fun setAccentColor(@ColorInt color: Int) {
-            normalPaint.hourPaint.color = color
-            callback(holder, EVENT_ACCENT)
-        }
-
-        fun setPrimaryColor(@ColorInt color: Int) {
-            normalPaint.complicationsPaint.color = color
-            callback(holder, EVENT_PRIMARY)
-        }
-
-        fun setSecondaryColor(@ColorInt color: Int) {
-            normalPaint.minutePaint.color = color
-            callback(holder, EVENT_SECONDARY)
+        override fun onDestroy() {
+            timeZoneManager.stop()
+            configRegistration?.unregister()
+            iconLoaderDispatcher.close()
+            super.onDestroy()
         }
 
     }
-
-    /**
-     * @author Artem Chepurnoy
-     */
-    class PaintHolder(
-            var backgroundColor: Int,
-            val hourPaint: Paint,
-            val minutePaint: Paint,
-            val complicationsPaint: Paint
-    )
 
 }

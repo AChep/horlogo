@@ -128,6 +128,10 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
         super.onStop()
     }
 
+    override fun navigateToComplicationChooser(complicationId: Int) {
+        view!!.showComplicationChooser(complicationId)
+    }
+
     /**
      * @author Artem Chepurnoy
      */

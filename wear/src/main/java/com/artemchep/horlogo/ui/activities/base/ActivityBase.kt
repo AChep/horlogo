@@ -2,13 +2,16 @@ package com.artemchep.horlogo.ui.activities.base
 
 import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.widget.toast
 import com.artemchep.horlogo.IPresenter
 import com.artemchep.horlogo.IView
+import com.artemchep.horlogo.interfaces.Toastable
 
 /**
  * @author Artem Chepurnoy
  */
-abstract class ActivityBase<V : IView<V, P>, P : IPresenter<P, V>> : Activity() {
+abstract class ActivityBase<V : IView<V, P>, P : IPresenter<P, V>> : Activity(), Toastable {
 
     abstract val view: V
 
@@ -52,5 +55,9 @@ abstract class ActivityBase<V : IView<V, P>, P : IPresenter<P, V>> : Activity() 
     }
 
     override fun onRetainNonConfigurationInstance(): Any = presenter
+
+    override fun showToast(text: CharSequence) {
+        toast(text, Toast.LENGTH_SHORT)
+    }
 
 }

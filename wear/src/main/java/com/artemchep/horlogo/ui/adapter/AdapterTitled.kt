@@ -12,22 +12,106 @@ import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
  * @author Artem Chepurnoy
  */
 abstract class AdapterTitled<M, H : RecyclerView.ViewHolder>(
+        /**
+         * List of models to be shown. Changing this list in future will
+         * affect the adapter, so don't forget to notify it about data
+         * set change.
+         */
         models: MutableList<M>,
         private val title: CharSequence?
-) :
-        AdapterBase<M, RecyclerView.ViewHolder>(models) {
+) : AdapterBase<M, RecyclerView.ViewHolder>(models) {
 
     companion object {
         const val TYPE_TITLE = 1
         const val TYPE_ITEM = 2
     }
 
-    private val offset = title?.let { 1 } ?: 0
+    override val binder: Binder<RecyclerView.ViewHolder> = object : Binder<RecyclerView.ViewHolder>() {
+
+        override fun createView(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): View {
+            return when (viewType) {
+                TYPE_TITLE -> binderTitle.createView(inflater, parent, viewType)
+                else -> binderItem.createView(inflater, parent, viewType)
+            }
+        }
+
+        override fun createViewHolder(itemView: View, viewType: Int): RecyclerView.ViewHolder {
+            return when (viewType) {
+                TYPE_TITLE -> binderTitle.createViewHolder(itemView, viewType)
+                else -> binderItem.createViewHolder(itemView, viewType)
+            }
+        }
+
+        override fun bindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val viewType = getItemViewType(position)
+            when (viewType) {
+                TYPE_TITLE -> {
+                }
+                else -> {
+                    @Suppress("UNCHECKED_CAST")
+                    binderItem.bindViewHolder(holder as H, position)
+                }
+            }
+        }
+
+    }
 
     /**
+     * Binder for the rest of items
+     * @see binder
+     * @see binderTitle
+     */
+    abstract val binderItem: Binder<H>
+
+    /**
+     * Binder for the single title item
+     * @see binder
+     * @see binderItem
+     */
+    private val binderTitle: Binder<RecyclerView.ViewHolder> = object : Binder<RecyclerView.ViewHolder>() {
+
+        override fun createView(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): View {
+            return inflater.inflate(R.layout.item_title, parent, false)
+        }
+
+        override fun createViewHolder(itemView: View, viewType: Int): RecyclerView.ViewHolder {
+            return TitleViewHolder(this@AdapterTitled, itemView)
+                    .apply {
+                        titleTextView.text = title
+                    }
+        }
+
+        override fun bindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        }
+
+    }
+
+    private val offset = title?.let { 1 } ?: 0
+
+    override fun getItemViewType(position: Int): Int {
+        return if (offset != 0 && position == 0) {
+            TYPE_TITLE
+        } else TYPE_ITEM
+    }
+
+    override fun getItemCount(): Int = super.getItemCount() + offset
+
+    override fun getItem(position: Int): M = models[position - offset]
+
+    override fun tellItemChanged(position: Int, payload: Any?) {
+        notifyItemChanged(position + offset, payload)
+    }
+
+    override fun tellItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+        notifyItemRangeChanged(positionStart + offset, itemCount, payload)
+    }
+
+    /**
+     * View holder for simple title item.
+     *
      * @author Artem Chepurnoy
      */
-    class TitleHolder(
+    private class TitleViewHolder(
             listener: OnItemClickListener<Int>,
             view: View
     ) : AdapterBase.ViewHolderBase(listener, view) {
@@ -35,44 +119,5 @@ abstract class AdapterTitled<M, H : RecyclerView.ViewHolder>(
         internal val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
 
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            TYPE_TITLE -> {
-                val v = inflater.inflate(R.layout.item_title, parent, false)
-                TitleHolder(this, v)
-                        .apply {
-                            titleTextView.text = title
-                        }
-            }
-            else -> onCreateItemViewHolder(parent, viewType)
-        }
-    }
-
-    abstract fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): H
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val type = getItemViewType(position)
-        when (type) {
-            TYPE_TITLE -> {
-            }
-            else -> onBindItemViewHolder(holder as H, position, models[position - offset])
-        }
-    }
-
-    abstract fun onBindItemViewHolder(holder: H, position: Int, model: M)
-
-    override fun onItemClick(view: View, model: Int) {
-        onItemClickListener?.onItemClick(view, models[model - offset])
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (title != null && position == 0) {
-            TYPE_TITLE
-        } else TYPE_ITEM
-    }
-
-    override fun getItemCount(): Int = super.getItemCount() + offset
 
 }

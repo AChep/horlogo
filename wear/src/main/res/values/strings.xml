@@ -8,6 +8,7 @@
     <string name="config_complication_second_line">Second line</string>
     <string name="config_complication_third_line">Third line</string>
     <string name="config_complication_fourth_line">Fourth line</string>
+    <string name="config_layout">Layout</string>
     <string name="config_theme">Theme</string>
     <string name="config_accent">Accent color</string>
     <string name="config_about">About</string>
@@ -18,6 +19,9 @@
     <string name="theme_black">Black</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
+
+    <string name="layout_vertical">Vertical</string>
+    <string name="layout_horizontal">Horizontal</string>
 
     <string name="red">Red</string>
     <string name="pink">Pink</string>
@@ -43,6 +47,8 @@
     ]]></string>
     <string name="about_content"><![CDATA[
         <b>Horlogo is a simple watch face released under GPLv3 license.</b><br/>
+        <br/>
+        Many thanks to JetBrains for <b>Kotlin</b> and Google for the <b>Support Library</b>.<br/>
         <br/>
         Copyright %1$s Artem Chepurnoy.
         All Rights Reserved.

@@ -7,6 +7,7 @@ import com.artemchep.horlogo.BuildConfig
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IAboutPresenter
 import com.artemchep.horlogo.contracts.IAboutView
+import com.artemchep.horlogo.extensions.sealed
 
 
 /**
@@ -45,8 +46,12 @@ class AboutPresenter(private val context: Context) : IAboutPresenter {
         return context.getString(R.string.about_content, BuildConfig.MY_TIME_YEAR).parseAsHtml()
     }
 
-    override fun showBuildInfo() {
-        view!!.showToast(BuildConfig.MY_TIME)
+    override fun navigateTo(dst: IAboutPresenter.Destination) {
+        when (dst) {
+            IAboutPresenter.Destination.BUILD_INFO -> {
+                view!!.showToast(BuildConfig.MY_TIME)
+            }
+        }.sealed()
     }
 
 }

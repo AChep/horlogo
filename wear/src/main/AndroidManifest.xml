@@ -18,7 +18,7 @@
 
         <activity android:name="android.support.wearable.complications.ComplicationHelperActivity" />
 
-        <activity android:name=".ui.activities.ConfigActivity">
+        <activity android:name=".ui.activities.MainActivity">
             <intent-filter>
                 <action android:name="com.artemchep.horlogo.CONFIG_COMPLICATION_SIMPLE" />
 
@@ -27,10 +27,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.ConfigComplicationsActivity" />
-        <activity android:name=".ui.activities.ConfigThemeActivity" />
-        <activity android:name=".ui.activities.ConfigPickerActivity" />
-        <activity android:name=".ui.activities.ConfigAboutActivity" />
+        <activity android:name=".ui.activities.ComplicationsActivity" />
+        <activity android:name=".ui.activities.PickerActivity" />
+        <activity android:name=".ui.activities.AboutActivity" />
 
         <meta-data
             android:name="com.google.android.wearable.standalone"

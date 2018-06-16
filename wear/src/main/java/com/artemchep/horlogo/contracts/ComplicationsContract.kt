@@ -15,6 +15,12 @@ interface IComplicationsView : IView<IComplicationsView, IComplicationsPresenter
 
     fun showLoader()
 
+    /**
+     * Shows a chooser that allows to pick specific complication for
+     * a complication id.
+     */
+    fun showComplicationChooser(complicationId: Int)
+
 }
 
 /**
@@ -23,5 +29,7 @@ interface IComplicationsView : IView<IComplicationsView, IComplicationsPresenter
 interface IComplicationsPresenter : IPresenter<IComplicationsPresenter, IComplicationsView> {
 
     fun retrieveProviderInfo()
+
+    fun navigateToComplicationChooser(complicationId: Int)
 
 }

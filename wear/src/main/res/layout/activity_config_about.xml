@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,14 +15,13 @@
         android:paddingEnd="@dimen/header_end_padding"
         android:paddingBottom="56dp">
 
-        <TextView
+        <com.artemchep.horlogo.ui.views.BrandTextView
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="sans-serif-condensed"
             android:textColor="?android:textColorPrimary"
-            android:textSize="18sp"
+            android:textSize="20sp"
             tools:text="@string/app_name" />
 
         <TextView
@@ -30,8 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:breakStrategy="high_quality" />
+            android:breakStrategy="high_quality"
+            tools:text="@string/about_content" />
 
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

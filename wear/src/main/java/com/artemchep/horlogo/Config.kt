@@ -2,83 +2,37 @@ package com.artemchep.horlogo
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.artemchep.horlogo.ui.Palette
-import com.artemchep.horlogo.ui.Theme
-import kotlin.properties.ObservableProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
+import com.artemchep.config.ConfigBase
+import com.artemchep.horlogo.ui.PALETTE_BLUE
 
 /**
  * @author Artem Chepurnoy
  */
-object Config {
+object Config : ConfigBase() {
 
-    private const val KEY_ACCENT_COLOR = "accent"
-    private const val KEY_THEME = "theme"
+    const val KEY_ACCENT_COLOR = "accent"
+    // Layout
+    const val KEY_LAYOUT = "layout"
+    const val LAYOUT_HORIZONTAL = "layout::horizontal"
+    const val LAYOUT_VERTICAL = "layout::vertical"
+    // Theme
+    const val KEY_THEME = "theme"
+    const val THEME_BLACK = "BLACK"
+    const val THEME_DARK = "DARK"
+    const val THEME_LIGHT = "LIGHT"
 
-    private var editor: SharedPreferences.Editor? = null
-    private var broadcasting = false
+    var accentColor: Int by configProperty(KEY_ACCENT_COLOR, PALETTE_BLUE)
+    var themeName: String by configProperty(KEY_THEME, THEME_BLACK)
+    var layoutName: String by configProperty(KEY_LAYOUT, LAYOUT_VERTICAL)
 
-    var accentColor: Int by configProperty(KEY_ACCENT_COLOR, Palette.BLUE)
-    var themeName: String by configProperty(KEY_THEME, Theme.BLACK.name)
-
-    /**
-     * Returns associated with [themeName] enum
-     * object.
-     */
-    val theme: Theme
-        get() = try {
-            Theme.valueOf(themeName)
-        } catch (e: IllegalArgumentException) {
-            Theme.BLACK
-        }
-
-    fun init(context: Context) {
-        broadcasting = true
-
-        val map = context.getConfigSharedPreferences().all
-        (map[KEY_ACCENT_COLOR] as Int?)?.also { accentColor = it }
-        (map[KEY_THEME] as String?)?.also { themeName = it }
-
-        broadcasting = false
+    override fun onInitVars(map: Map<String, *>) {
+        accentColor = map.getOrDefaultTs(KEY_ACCENT_COLOR, accentColor)
+        layoutName = map.getOrDefaultTs(KEY_LAYOUT, layoutName)
+        themeName = map.getOrDefaultTs(KEY_THEME, themeName)
     }
 
-    /**
-     * Call before writing to config properties, otherwise you
-     * will get a [NullPointerException].
-     */
-    fun edit(context: Context, block: Config.() -> Unit) {
-        synchronized(this) {
-            try {
-                context.getConfigSharedPreferences().edit().let {
-                    editor = it
-                    block.invoke(this@Config)
-                    it.apply()
-                }
-            } finally {
-                editor = null
-            }
-        }
-    }
-
-    private fun Context.getConfigSharedPreferences(): SharedPreferences {
-        return getSharedPreferences("config", 0)
-    }
-
-    private fun <T> configProperty(key: String, initialValue: T): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-        override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-            if (broadcasting || oldValue == newValue) {
-                return
-            }
-
-            editor!!.apply {
-                when (newValue) {
-                    is Int -> putInt(key, newValue)
-                    is Long -> putLong(key, newValue)
-                    is String -> putString(key, newValue)
-                }
-            }
-        }
+    override fun getConfigSharedPreferences(context: Context): SharedPreferences {
+        return context.getSharedPreferences("config", 0)
     }
 
 }
