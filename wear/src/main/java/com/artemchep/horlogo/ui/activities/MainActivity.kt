@@ -24,7 +24,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
 
     override val view: IMainView = this
 
-    private val models = ArrayList<ConfigItem>()
+    override val items: MutableList<ConfigItem> = ArrayList()
 
     private lateinit var adapter: MainAdapter
 
@@ -33,7 +33,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val title = getString(R.string.config)
-        adapter = MainAdapter(models, title).apply {
+        adapter = MainAdapter(items, title).apply {
             onItemClickListener = this@MainActivity
         }
 
@@ -64,12 +64,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
         }
     }
 
-    override fun showItems(items: List<ConfigItem>) {
-        models.apply {
-            clear()
-            addAll(items)
-        }
-
+    override fun notifyDataChanged() {
         adapter.notifyDataSetChanged()
     }
 

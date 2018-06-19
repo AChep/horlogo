@@ -10,7 +10,9 @@ import com.artemchep.horlogo.ui.model.ConfigPickerItem
  */
 interface IMainView : IView<IMainView, IMainPresenter> {
 
-    fun showItems(items: List<ConfigItem>)
+    val items: MutableList<ConfigItem>
+
+    fun notifyDataChanged()
 
     fun notifyItemChanged(position: Int)
 

@@ -35,6 +35,17 @@ class MainPresenter(private val context: Context) : IMainPresenter {
     }
 
     override var view: IMainView? = null
+        set(value) {
+            field = value
+            items = value?.items?.apply {
+                // Inject the models of the
+                // list.
+                clear()
+                addAll(itemsSrc)
+            }
+        }
+
+    private var items: MutableList<ConfigItem>? = null
 
     private val configListener = object : ConfigBase.OnConfigChangedListener {
 
@@ -100,7 +111,7 @@ class MainPresenter(private val context: Context) : IMainPresenter {
     // Items
     //
 
-    private val items = listOf(
+    private val itemsSrc = listOf(
             ConfigItem(
                     id = ITEM_COMPLICATIONS,
                     icon = getDrawable(R.drawable.ic_view),
@@ -123,11 +134,6 @@ class MainPresenter(private val context: Context) : IMainPresenter {
                     title = getString(R.string.config_about))
     )
 
-    override fun onStart() {
-        super.onStart()
-        view?.showItems(items)
-    }
-
     override fun onResume() {
         super.onResume()
 
@@ -141,35 +147,38 @@ class MainPresenter(private val context: Context) : IMainPresenter {
     }
 
     private fun updateItems() {
-        updateLayoutItem()
-        updateThemeItem()
-        updateAccentItem()
+        updateLayoutItem(false)
+        updateThemeItem(false)
+        updateAccentItem(false)
+        view!!.notifyDataChanged()
     }
 
-    private fun updateLayoutItem() {
+    private fun updateLayoutItem(notifyItemChanged: Boolean = true) {
         val layoutName = layoutMap[Config.layoutName]
-        updateSingleItem(ITEM_LAYOUT, layoutName)
+        updateSingleItem(ITEM_LAYOUT, layoutName, notifyItemChanged)
     }
 
-    private fun updateThemeItem() {
+    private fun updateThemeItem(notifyItemChanged: Boolean = true) {
         val themeName = themeMap[Config.themeName]
-        updateSingleItem(ITEM_THEME, themeName)
+        updateSingleItem(ITEM_THEME, themeName, notifyItemChanged)
     }
 
-    private fun updateAccentItem() {
+    private fun updateAccentItem(notifyItemChanged: Boolean = true) {
         val accentColorName = paletteMap[Config.accentColor]
-        updateSingleItem(ITEM_ACCENT_COLOR, accentColorName)
+        updateSingleItem(ITEM_ACCENT_COLOR, accentColorName, notifyItemChanged)
     }
 
-    private fun updateSingleItem(id: Int, summary: String?) {
-        items
+    private fun updateSingleItem(id: Int, summary: String?, notifyItemChanged: Boolean) {
+        items!!
                 .indexOfFirst { it.id == id }
                 .also { position ->
-                    items[position].summary = summary
+                    items!![position].summary = summary
 
-                    // Tell view to update the item at
-                    // position
-                    view?.notifyItemChanged(position)
+                    if (notifyItemChanged) {
+                        // Tell view to update the item at
+                        // position
+                        view?.notifyItemChanged(position)
+                    }
                 }
     }
 
