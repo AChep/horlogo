@@ -5,5 +5,7 @@
     <dimen name="header_end_padding">22dp</dimen>
     <dimen name="list_start_padding">36dp</dimen>
     <dimen name="list_end_padding">22dp</dimen>
+    <dimen name="watchface_start_padding">48dp</dimen>
+    <dimen name="watchface_end_padding">36dp</dimen>
 
 </resources>
