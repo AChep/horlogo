@@ -107,6 +107,7 @@ class WatchFaceService : CanvasWatchFaceService() {
                     .inflate(layoutRes, null, false)
                     .let { it as WatchFaceView }
                     .apply {
+                        isDrawingCacheEnabled = false
                         // Set the layout name as a tag
                         tag = layoutName
                     }
@@ -169,6 +170,7 @@ class WatchFaceService : CanvasWatchFaceService() {
                     .inflate(layoutRes, null, false)
                     .let { it as WatchFaceView }
                     .apply {
+                        isDrawingCacheEnabled = false
                         setAntiAlias(!isInAmbientMode)
                         setTime(calendar)
 
