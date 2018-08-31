@@ -7,12 +7,12 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.artemchep.config.Config
 import com.artemchep.horlogo.Cfg
-import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IMainPresenter
 import com.artemchep.horlogo.contracts.IMainView
 import com.artemchep.horlogo.ui.*
 import com.artemchep.horlogo.ui.model.ConfigPickerItem
 import com.artemchep.horlogo.ui.model.Theme
+import com.artemchep.horlogo_common.R
 
 
 /**

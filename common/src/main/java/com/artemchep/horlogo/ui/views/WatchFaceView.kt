@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import com.artemchep.horlogo.*
 import com.artemchep.horlogo.ui.drawables.EmptyDrawable
 import com.artemchep.horlogo.ui.model.Theme
+import com.artemchep.horlogo_common.R
 import java.util.*
 
 /**

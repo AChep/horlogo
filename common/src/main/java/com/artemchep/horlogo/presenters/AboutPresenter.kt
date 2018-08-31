@@ -3,11 +3,11 @@ package com.artemchep.horlogo.presenters
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.text.parseAsHtml
-import com.artemchep.horlogo.BuildConfig
-import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IAboutPresenter
 import com.artemchep.horlogo.contracts.IAboutView
 import com.artemchep.horlogo.extensions.sealed
+import com.artemchep.horlogo_common.BuildConfig
+import com.artemchep.horlogo_common.R
 
 
 /**
