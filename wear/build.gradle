@@ -47,8 +47,8 @@ android {
     buildTypes {
         release {
             zipAlignEnabled true
-            shrinkResources true
-            minifyEnabled true
+            shrinkResources false
+            minifyEnabled false
             proguardFile 'proguard-rules.pro'
             proguardFile getDefaultProguardFile('proguard-android.txt')
 
