@@ -1,1 +1,5 @@
 include ':wear'
+include ':mobile'
+include ':common'
+include 'config'
+include 'config:app'

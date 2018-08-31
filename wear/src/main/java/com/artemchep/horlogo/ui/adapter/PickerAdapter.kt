@@ -2,13 +2,14 @@ package com.artemchep.horlogo.ui.adapter
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.support.v4.graphics.ColorUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.luminance
 import com.artemchep.horlogo.R
+import com.artemchep.horlogo.ui.adapters.AdapterBase
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
 import com.artemchep.horlogo.ui.model.ConfigPickerItem
 
@@ -24,16 +25,16 @@ open class PickerAdapter(
     override val binderItem = object : Binder<Holder>() {
 
         override fun createView(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): View {
-           return inflater.inflate(R.layout.item_color, parent, false)
+            return inflater.inflate(R.layout.item_color, parent, false)
         }
 
         override fun createViewHolder(itemView: View, viewType: Int): Holder {
-            return Holder(this@PickerAdapter, itemView)
+            return Holder(itemView, this@PickerAdapter)
         }
 
         override fun bindViewHolder(holder: Holder, position: Int) {
             val model = getItem(position)
-            val colorIsDark = ColorUtils.calculateLuminance(model.color) < 0.5f
+            val colorIsDark = model.color.luminance < 0.5f
             val colorContent = if (colorIsDark) Color.WHITE else Color.BLACK
 
             holder.apply {
@@ -57,9 +58,9 @@ open class PickerAdapter(
      * @author Artem Chepurnoy
      */
     class Holder(
-            listener: OnItemClickListener<Int>,
-            view: View
-    ) : AdapterBase.ViewHolderBase(listener, view), View.OnClickListener {
+            view: View,
+            listener: OnItemClickListener<Int>
+    ) : AdapterBase.ViewHolderBase(view, listener), View.OnClickListener {
 
         internal val checkImageView = view.findViewById<ImageView>(R.id.iconImageView)
         internal val titleTextView = view.findViewById<TextView>(R.id.titleTextView)

@@ -2,10 +2,10 @@ package com.artemchep.horlogo.ui.activities
 
 import android.content.ComponentName
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.complications.ComplicationHelperActivity
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IComplicationsPresenter
 import com.artemchep.horlogo.contracts.IComplicationsView

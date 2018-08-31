@@ -5,16 +5,11 @@ import android.content.Context
 import android.support.wearable.complications.ComplicationProviderInfo
 import android.support.wearable.complications.ProviderInfoRetriever
 import android.util.SparseBooleanArray
-import com.artemchep.horlogo.R
+import com.artemchep.horlogo.*
 import com.artemchep.horlogo.contracts.IComplicationsPresenter
 import com.artemchep.horlogo.contracts.IComplicationsView
 import com.artemchep.horlogo.ui.model.ConfigItem
 import com.artemchep.horlogo.ui.watchface.WatchFaceService
-import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATIONS
-import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATION_FIRST
-import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATION_FOURTH
-import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATION_SECOND
-import com.artemchep.horlogo.ui.watchface.WatchFaceService.Companion.COMPLICATION_THIRD
 import java.util.concurrent.Executors
 
 private typealias Data = Pair<Int, ComplicationProviderInfo?>
@@ -32,19 +27,19 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
 
     private val models = mutableListOf(
             ConfigItem(
-                    id = COMPLICATION_FIRST,
+                    id = WATCH_COMPLICATION_FIRST,
                     icon = context.getDrawable(R.drawable.ic_plus),
                     title = context.getString(R.string.config_complication_first_line)),
             ConfigItem(
-                    id = COMPLICATION_SECOND,
+                    id = WATCH_COMPLICATION_SECOND,
                     icon = context.getDrawable(R.drawable.ic_plus),
                     title = context.getString(R.string.config_complication_second_line)),
             ConfigItem(
-                    id = COMPLICATION_THIRD,
+                    id = WATCH_COMPLICATION_THIRD,
                     icon = context.getDrawable(R.drawable.ic_plus),
                     title = context.getString(R.string.config_complication_third_line)),
             ConfigItem(
-                    id = COMPLICATION_FOURTH,
+                    id = WATCH_COMPLICATION_FOURTH,
                     icon = context.getDrawable(R.drawable.ic_plus),
                     title = context.getString(R.string.config_complication_fourth_line))
     )
@@ -105,10 +100,10 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
 
                 view!!.showError()
             }
-        }, *COMPLICATIONS)
+        }, *WATCH_COMPLICATIONS)
 
         val watchFaceComponentName = ComponentName(context, WatchFaceService::class.java)
-        providerInfoRetriever.retrieveProviderInfo(providerInfoBucket, watchFaceComponentName, *COMPLICATIONS)
+        providerInfoRetriever.retrieveProviderInfo(providerInfoBucket, watchFaceComponentName, *WATCH_COMPLICATIONS)
     }
 
     override fun onPause() {

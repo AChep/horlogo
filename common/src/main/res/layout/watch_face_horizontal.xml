@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.artemchep.horlogo.ui.views.WatchFaceView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Space
+        android:id="@+id/clock"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="0.47" />
+
+    <Space
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clock"
+        app:layout_constraintVertical_weight="0.53" />
+
+    <!--
+        Digital clock
+        -->
+
+    <TextView
+        android:id="@+id/hour"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="4dp"
+        android:forceHasOverlappingRendering="false"
+        android:gravity="bottom"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:lineSpacingMultiplier="1.0"
+        android:maxLines="1"
+        android:text="22"
+        android:fontFamily="sans-serif-light"
+        android:textScaleX="0.9"
+        android:textSize="62sp"
+        app:layout_constraintBottom_toBottomOf="@id/clock"
+        app:layout_constraintEnd_toStartOf="@id/divider"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/clock" />
+
+    <TextView
+        android:id="@+id/divider"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:forceHasOverlappingRendering="false"
+        android:gravity="bottom"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:lineSpacingMultiplier="1.0"
+        android:maxLines="1"
+        android:text=":"
+        android:fontFamily="sans-serif-thin"
+        android:textScaleX="0.9"
+        android:textSize="62sp"
+        app:layout_constraintBottom_toBottomOf="@id/clock"
+        app:layout_constraintEnd_toStartOf="@id/minute"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/hour"
+        app:layout_constraintTop_toTopOf="@id/clock" />
+
+    <TextView
+        android:id="@+id/minute"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif-thin"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:forceHasOverlappingRendering="false"
+        android:gravity="bottom"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:lineSpacingMultiplier="1.0"
+        android:maxLines="1"
+        android:text="22"
+        android:textScaleX="0.9"
+        android:textSize="62sp"
+        app:layout_constraintBottom_toBottomOf="@id/clock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/divider"
+        app:layout_constraintTop_toTopOf="@id/clock" />
+
+    <!--
+        Complications
+        -->
+
+    <TextView
+        android:id="@+id/complication1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:paddingStart="@dimen/watchface_start_padding"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/watchface_end_padding"
+        android:paddingBottom="4dp"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/content"
+        tools:text="Complication #1"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/complication2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:paddingStart="@dimen/watchface_start_padding"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/watchface_end_padding"
+        android:paddingBottom="4dp"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/complication1"
+        tools:text="Complication #2"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/complication3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:paddingStart="@dimen/watchface_start_padding"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/watchface_end_padding"
+        android:paddingBottom="4dp"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/complication2"
+        tools:text="Complication #3"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/complication4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:paddingStart="@dimen/watchface_start_padding"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/watchface_end_padding"
+        android:paddingBottom="4dp"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/complication3"
+        tools:text="Complication #4"
+        tools:visibility="visible" />
+
+</com.artemchep.horlogo.ui.views.WatchFaceView>

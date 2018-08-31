@@ -1,11 +1,12 @@
 package com.artemchep.horlogo.ui.adapter
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.artemchep.horlogo.R
+import com.artemchep.horlogo.ui.adapters.AdapterBase
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
 
 /**
@@ -75,7 +76,7 @@ abstract class AdapterTitled<M, H : RecyclerView.ViewHolder>(
         }
 
         override fun createViewHolder(itemView: View, viewType: Int): RecyclerView.ViewHolder {
-            return TitleViewHolder(this@AdapterTitled, itemView)
+            return TitleViewHolder(itemView, this@AdapterTitled)
                     .apply {
                         titleTextView.text = title
                     }
@@ -112,9 +113,9 @@ abstract class AdapterTitled<M, H : RecyclerView.ViewHolder>(
      * @author Artem Chepurnoy
      */
     private class TitleViewHolder(
-            listener: OnItemClickListener<Int>,
-            view: View
-    ) : AdapterBase.ViewHolderBase(listener, view) {
+            view: View,
+            listener: OnItemClickListener<Int>
+    ) : AdapterBase.ViewHolderBase(view, listener) {
 
         internal val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
 

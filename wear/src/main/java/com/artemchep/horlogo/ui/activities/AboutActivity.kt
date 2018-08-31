@@ -2,7 +2,6 @@ package com.artemchep.horlogo.ui.activities
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IAboutPresenter
 import com.artemchep.horlogo.contracts.IAboutView

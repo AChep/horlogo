@@ -3,8 +3,8 @@ package com.artemchep.horlogo.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IPickerPresenter
 import com.artemchep.horlogo.contracts.IPickerView

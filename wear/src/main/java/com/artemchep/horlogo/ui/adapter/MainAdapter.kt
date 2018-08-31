@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.extensions.setTextExclusive
+import com.artemchep.horlogo.ui.adapters.AdapterBase
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
 import com.artemchep.horlogo.ui.model.ConfigItem
 
@@ -25,7 +26,7 @@ open class MainAdapter(
         }
 
         override fun createViewHolder(itemView: View, viewType: Int): Holder {
-            return Holder(this@MainAdapter, itemView)
+            return Holder(itemView, this@MainAdapter)
         }
 
         override fun bindViewHolder(holder: Holder, position: Int) {
@@ -43,9 +44,9 @@ open class MainAdapter(
      * @author Artem Chepurnoy
      */
     class Holder(
-            listener: OnItemClickListener<Int>,
-            view: View
-    ) : AdapterBase.ViewHolderBase(listener, view), View.OnClickListener {
+            view: View,
+            listener: OnItemClickListener<Int>
+    ) : AdapterBase.ViewHolderBase(view, listener), View.OnClickListener {
 
         internal val iconImageView = view.findViewById<ImageView>(R.id.iconImageView)
         internal val titleTextView = view.findViewById<TextView>(R.id.titleTextView)

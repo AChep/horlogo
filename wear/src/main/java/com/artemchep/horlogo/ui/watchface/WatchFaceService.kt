@@ -12,11 +12,13 @@ import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.core.util.forEach
-import com.artemchep.config.ConfigBase
-import com.artemchep.horlogo.Config
+import com.artemchep.config.Config
+import com.artemchep.horlogo.Cfg
 import com.artemchep.horlogo.R
+import com.artemchep.horlogo.WATCH_COMPLICATIONS
 import com.artemchep.horlogo.extensions.findViewByLocation
 import com.artemchep.horlogo.ui.model.Theme
+import com.artemchep.horlogo.ui.views.WatchFaceView
 import com.artemchep.horlogo.util.TimezoneManager
 import kotlinx.coroutines.experimental.ThreadPoolDispatcher
 import kotlinx.coroutines.experimental.android.UI
@@ -31,21 +33,6 @@ class WatchFaceService : CanvasWatchFaceService() {
 
     companion object {
         private const val TAG = "WatchFaceService"
-
-        const val COMPLICATION_FIRST = 101
-        const val COMPLICATION_SECOND = 102
-        const val COMPLICATION_THIRD = 103
-        const val COMPLICATION_FOURTH = 104
-
-        /**
-         * Array of IDs of all complications: [COMPLICATION_FIRST], [COMPLICATION_SECOND],
-         * [COMPLICATION_THIRD], [COMPLICATION_FOURTH].
-         */
-        val COMPLICATIONS = intArrayOf(
-                COMPLICATION_FIRST,
-                COMPLICATION_SECOND,
-                COMPLICATION_THIRD,
-                COMPLICATION_FOURTH)
     }
 
     override fun onCreateEngine() = WatchFaceEngine()
@@ -53,7 +40,7 @@ class WatchFaceService : CanvasWatchFaceService() {
     /**
      * @author Artem Chepurnoy
      */
-    open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(), ConfigBase.OnConfigChangedListener {
+    open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(), Config.OnConfigChangedListener<String> {
 
         private lateinit var view: WatchFaceView
 
@@ -71,7 +58,7 @@ class WatchFaceService : CanvasWatchFaceService() {
                 complicationColor = Color.LTGRAY
         )
 
-        private var configRegistration: ConfigBase.ConfigRegistration? = null
+        private var configRegistration: Config.Registration<String>? = null
 
         private val calendar = Calendar.getInstance()
 
@@ -91,14 +78,14 @@ class WatchFaceService : CanvasWatchFaceService() {
             timeZoneManager = TimezoneManager(context)
             iconLoaderDispatcher = newSingleThreadContext(TAG)
 
-            setActiveComplications(*COMPLICATIONS)
+            setActiveComplications(*WATCH_COMPLICATIONS)
             setWatchFaceStyle(WatchFaceStyle.Builder(this@WatchFaceService)
                     .setAcceptsTapEvents(true)
                     .build())
 
-            val layoutName = Config.layoutName
+            val layoutName = Cfg.layoutName
             val layoutRes = when (layoutName) {
-                Config.LAYOUT_HORIZONTAL -> R.layout.watch_face_horizontal
+                Cfg.LAYOUT_HORIZONTAL -> R.layout.watch_face_horizontal
                 else -> R.layout.watch_face
             }
 
@@ -120,7 +107,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             configRegistration?.unregister()
 
             if (visible) {
-                configRegistration = Config.addListener(this)
+                configRegistration = Cfg.addListener(this)
                 timeZoneManager.start {
                     calendar.timeZone = TimeZone.getDefault()
                     onTimeTick()
@@ -129,7 +116,7 @@ class WatchFaceService : CanvasWatchFaceService() {
                 // Load the config and
                 // update the time
 
-                if (view.tag as String? != Config.layoutName) {
+                if (view.tag as String? != Cfg.layoutName) {
                     // Update the theme model and
                     // reload the whole view
                     loadThemeFromConfig()
@@ -146,12 +133,14 @@ class WatchFaceService : CanvasWatchFaceService() {
             }
         }
 
-        override fun onConfigChanged(key: String) {
-            when (key) {
-                Config.KEY_LAYOUT -> updateLayoutFromConfig()
-                Config.KEY_THEME -> updateThemeFromConfig()
-                Config.KEY_ACCENT_COLOR -> updateThemeAccentColorFromConfig()
-                else -> return
+        override fun onConfigChanged(keys: Set<String>) {
+            keys.forEach { key ->
+                when (key) {
+                    Cfg.KEY_LAYOUT -> updateLayoutFromConfig()
+                    Cfg.KEY_THEME -> updateThemeFromConfig()
+                    Cfg.KEY_ACCENT_COLOR -> updateThemeAccentColorFromConfig()
+                    else -> return
+                }
             }
 
             // Request a redraw
@@ -159,9 +148,9 @@ class WatchFaceService : CanvasWatchFaceService() {
         }
 
         private fun updateLayoutFromConfig() {
-            val layoutName = Config.layoutName
+            val layoutName = Cfg.layoutName
             val layoutRes = when (layoutName) {
-                Config.LAYOUT_HORIZONTAL -> R.layout.watch_face_horizontal
+                Cfg.LAYOUT_HORIZONTAL -> R.layout.watch_face_horizontal
                 else -> R.layout.watch_face
             }
 
@@ -206,17 +195,17 @@ class WatchFaceService : CanvasWatchFaceService() {
         }
 
         private fun loadThemeFromConfig() {
-            theme = when (Config.themeName) {
-                Config.THEME_BLACK -> Theme.BLACK
-                Config.THEME_DARK -> Theme.DARK
-                Config.THEME_LIGHT -> Theme.LIGHT
+            theme = when (Cfg.themeName) {
+                Cfg.THEME_BLACK -> Theme.BLACK
+                Cfg.THEME_DARK -> Theme.DARK
+                Cfg.THEME_LIGHT -> Theme.LIGHT
                 else -> throw IllegalArgumentException()
-            }.copy(clockHourColor = Config.accentColor)
+            }.copy(clockHourColor = Cfg.accentColor)
         }
 
         private fun updateThemeAccentColorFromConfig() {
             // Apply the accent color.
-            theme.clockHourColor = Config.accentColor
+            theme.clockHourColor = Cfg.accentColor
 
             // Bind to view
             bindTheme()
@@ -227,7 +216,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             val now = System.currentTimeMillis()
             calendar.timeInMillis = now
 
-            view!!.setTime(calendar)
+            view.setTime(calendar)
 
             complicationDataSparse.forEach { id, value ->
                 if (value.raw.isTimeDependent) {

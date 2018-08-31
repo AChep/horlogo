@@ -2,12 +2,12 @@ package com.artemchep.horlogo.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IMainPresenter
 import com.artemchep.horlogo.contracts.IMainView
-import com.artemchep.horlogo.presenters.MainPresenter
+import com.artemchep.horlogo.presenters.MainPresenterWear
 import com.artemchep.horlogo.ui.activities.base.ActivityBase
 import com.artemchep.horlogo.ui.adapter.MainAdapter
 import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
@@ -24,16 +24,14 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
 
     override val view: IMainView = this
 
-    override val items: MutableList<ConfigItem> = ArrayList()
-
     private lateinit var adapter: MainAdapter
 
-    override fun createPresenter() = MainPresenter(applicationContext)
+    override fun createPresenter() = MainPresenterWear(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val title = getString(R.string.config)
-        adapter = MainAdapter(items, title).apply {
+        adapter = MainAdapter(presenter.items, title).apply {
             onItemClickListener = this@MainActivity
         }
 
@@ -53,15 +51,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
     }
 
     override fun onItemClick(view: View, model: ConfigItem) {
-        with(presenter) {
-            when (model.id) {
-                MainPresenter.ITEM_COMPLICATIONS -> navigateTo(IMainPresenter.Destination.COMPLICATION)
-                MainPresenter.ITEM_LAYOUT -> navigateTo(IMainPresenter.Destination.LAYOUT)
-                MainPresenter.ITEM_THEME -> navigateTo(IMainPresenter.Destination.THEME)
-                MainPresenter.ITEM_ACCENT_COLOR -> navigateTo(IMainPresenter.Destination.ACCENT)
-                MainPresenter.ITEM_ABOUT -> navigateTo(IMainPresenter.Destination.ABOUT)
-            }
-        }
+        presenter.navigateTo(model.id)
     }
 
     override fun notifyDataChanged() {

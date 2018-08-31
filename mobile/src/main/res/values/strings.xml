@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">Horlogo</string>
+
+    <string name="action_close">Close</string>
+    <string name="action_about">About</string>
+
+</resources>
