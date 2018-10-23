@@ -12,7 +12,8 @@ import kotlinx.android.synthetic.main.activity_config_about.*
 /**
  * @author Artem Chepurnoy
  */
-class AboutActivity : ActivityBase<IAboutView, IAboutPresenter>(), IAboutView, View.OnClickListener {
+class AboutActivity : ActivityBase<IAboutView, IAboutPresenter>(), IAboutView,
+    View.OnClickListener {
 
     override val view: IAboutView = this
 

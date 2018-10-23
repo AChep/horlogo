@@ -2,8 +2,6 @@ package com.artemchep.horlogo.presenters
 
 import android.content.ComponentName
 import android.content.Context
-import android.support.wearable.complications.ComplicationProviderInfo
-import android.support.wearable.complications.ProviderInfoRetriever
 import android.util.SparseBooleanArray
 import com.artemchep.horlogo.*
 import com.artemchep.horlogo.contracts.IComplicationsPresenter
@@ -26,22 +24,26 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
     private val emptyModelIcon = context.getDrawable(R.drawable.ic_plus)
 
     private val models = mutableListOf(
-            ConfigItem(
-                    id = WATCH_COMPLICATION_FIRST,
-                    icon = context.getDrawable(R.drawable.ic_plus),
-                    title = context.getString(R.string.config_complication_first_line)),
-            ConfigItem(
-                    id = WATCH_COMPLICATION_SECOND,
-                    icon = context.getDrawable(R.drawable.ic_plus),
-                    title = context.getString(R.string.config_complication_second_line)),
-            ConfigItem(
-                    id = WATCH_COMPLICATION_THIRD,
-                    icon = context.getDrawable(R.drawable.ic_plus),
-                    title = context.getString(R.string.config_complication_third_line)),
-            ConfigItem(
-                    id = WATCH_COMPLICATION_FOURTH,
-                    icon = context.getDrawable(R.drawable.ic_plus),
-                    title = context.getString(R.string.config_complication_fourth_line))
+        ConfigItem(
+            id = WATCH_COMPLICATION_FIRST,
+            icon = context.getDrawable(R.drawable.ic_plus),
+            title = context.getString(R.string.config_complication_first_line)
+        ),
+        ConfigItem(
+            id = WATCH_COMPLICATION_SECOND,
+            icon = context.getDrawable(R.drawable.ic_plus),
+            title = context.getString(R.string.config_complication_second_line)
+        ),
+        ConfigItem(
+            id = WATCH_COMPLICATION_THIRD,
+            icon = context.getDrawable(R.drawable.ic_plus),
+            title = context.getString(R.string.config_complication_third_line)
+        ),
+        ConfigItem(
+            id = WATCH_COMPLICATION_FOURTH,
+            icon = context.getDrawable(R.drawable.ic_plus),
+            title = context.getString(R.string.config_complication_fourth_line)
+        )
     )
 
     private var providerInfoBucket: ComplicationProviderInfoBucket? = null
@@ -73,37 +75,42 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
         }
 
         providerInfoBucket?.cancel()
-        providerInfoBucket = ComplicationProviderInfoBucket(object : ComplicationProviderInfoBucket.Callback {
-            override fun onProviderInfoReceived(list: List<Data>) {
-                firstLoad = false
-                lastFailed = false
+        providerInfoBucket =
+                ComplicationProviderInfoBucket(object : ComplicationProviderInfoBucket.Callback {
+                    override fun onProviderInfoReceived(list: List<Data>) {
+                        firstLoad = false
+                        lastFailed = false
 
-                list.forEach { (watchFaceComplicationId, info) ->
-                    val index = models.indexOfFirst { it.id == watchFaceComplicationId }
-                    models[index].apply {
-                        icon = info?.providerIcon?.loadDrawable(context) ?: emptyModelIcon
-                        summary = info?.providerName
+                        list.forEach { (watchFaceComplicationId, info) ->
+                            val index = models.indexOfFirst { it.id == watchFaceComplicationId }
+                            models[index].apply {
+                                icon = info?.providerIcon?.loadDrawable(context) ?: emptyModelIcon
+                                summary = info?.providerName
+                            }
+                        }
+
+                        view!!.showComplicationsInfo(models)
                     }
-                }
 
-                view!!.showComplicationsInfo(models)
-            }
+                    override fun onRetrievalFailed() {
+                        firstLoad = false
+                        lastFailed = true
 
-            override fun onRetrievalFailed() {
-                firstLoad = false
-                lastFailed = true
+                        models.forEach {
+                            it.icon = emptyModelIcon
+                            it.summary = null
+                        }
 
-                models.forEach {
-                    it.icon = emptyModelIcon
-                    it.summary = null
-                }
-
-                view!!.showError()
-            }
-        }, *WATCH_COMPLICATIONS)
+                        view!!.showError()
+                    }
+                }, *WATCH_COMPLICATIONS)
 
         val watchFaceComponentName = ComponentName(context, WatchFaceService::class.java)
-        providerInfoRetriever.retrieveProviderInfo(providerInfoBucket, watchFaceComponentName, *WATCH_COMPLICATIONS)
+        providerInfoRetriever.retrieveProviderInfo(
+            providerInfoBucket,
+            watchFaceComponentName,
+            *WATCH_COMPLICATIONS
+        )
     }
 
     override fun onPause() {
@@ -131,9 +138,9 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
      * @author Artem Chepurnoy
      */
     private class ComplicationProviderInfoBucket(
-            private var callback: Callback?,
-            vararg ids: Int)
-        : ProviderInfoRetriever.OnProviderInfoReceivedCallback() {
+        private var callback: Callback?,
+        vararg ids: Int
+    ) : ProviderInfoRetriever.OnProviderInfoReceivedCallback() {
 
         private val data = ArrayList<Data>()
         private val check = SparseBooleanArray().apply {
@@ -153,7 +160,10 @@ class ComplicationsPresenter(private val context: Context) : IComplicationsPrese
 
         }
 
-        override fun onProviderInfoReceived(watchFaceComplicationId: Int, info: ComplicationProviderInfo?) {
+        override fun onProviderInfoReceived(
+            watchFaceComplicationId: Int,
+            info: ComplicationProviderInfo?
+        ) {
             check.put(watchFaceComplicationId, true)
             data += watchFaceComplicationId to info
 

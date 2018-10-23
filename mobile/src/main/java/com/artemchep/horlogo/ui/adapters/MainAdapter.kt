@@ -14,7 +14,7 @@ import com.artemchep.horlogo.ui.model.ConfigItem
  * @author Artem Chepurnoy
  */
 class MainAdapter(
-        models: MutableList<ConfigItem>
+    models: MutableList<ConfigItem>
 ) : AdapterBase<ConfigItem, MainAdapter.Holder>(models) {
 
     override val binder = object : Binder<Holder>() {
@@ -43,8 +43,8 @@ class MainAdapter(
      * @author Artem Chepurnoy
      */
     class Holder(
-            view: View,
-            listener: OnItemClickListener<Int>
+        view: View,
+        listener: OnItemClickListener<Int>
     ) : AdapterBase.ViewHolderBase(view, listener), View.OnClickListener {
 
         internal val iconImageView = view.findViewById<ImageView>(R.id.iconImageView)

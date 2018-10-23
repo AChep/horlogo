@@ -15,11 +15,11 @@ import com.artemchep.horlogo.ui.model.ConfigItem
  * @author Artem Chepurnoy
  */
 open class MainAdapter(
-        models: MutableList<ConfigItem>,
-        title: CharSequence?
+    models: MutableList<ConfigItem>,
+    title: CharSequence?
 ) : AdapterTitled<ConfigItem, MainAdapter.Holder>(models, title) {
 
-    override val binderItem = object : Binder<Holder>(){
+    override val binderItem = object : Binder<Holder>() {
 
         override fun createView(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): View {
             return inflater.inflate(R.layout.item_config, parent, false)
@@ -44,8 +44,8 @@ open class MainAdapter(
      * @author Artem Chepurnoy
      */
     class Holder(
-            view: View,
-            listener: OnItemClickListener<Int>
+        view: View,
+        listener: OnItemClickListener<Int>
     ) : AdapterBase.ViewHolderBase(view, listener), View.OnClickListener {
 
         internal val iconImageView = view.findViewById<ImageView>(R.id.iconImageView)

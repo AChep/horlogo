@@ -19,9 +19,9 @@ object Fonts {
 
     fun getTypeface(assetManager: AssetManager, name: String = OVERLOCK_REGULAR): Typeface {
         return FONTS
-                .getOrPut(name) {
-                    Typeface.createFromAsset(assetManager, "fonts/$name.ttf")
-                }
+            .getOrPut(name) {
+                Typeface.createFromAsset(assetManager, "fonts/$name.ttf")
+            }
     }
 
 }

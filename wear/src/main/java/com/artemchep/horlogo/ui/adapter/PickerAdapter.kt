@@ -17,10 +17,10 @@ import com.artemchep.horlogo.ui.model.ConfigPickerItem
  * @author Artem Chepurnoy
  */
 open class PickerAdapter(
-        models: MutableList<ConfigPickerItem>,
-        title: CharSequence?
+    models: MutableList<ConfigPickerItem>,
+    title: CharSequence?
 ) :
-        AdapterTitled<ConfigPickerItem, PickerAdapter.Holder>(models, title) {
+    AdapterTitled<ConfigPickerItem, PickerAdapter.Holder>(models, title) {
 
     override val binderItem = object : Binder<Holder>() {
 
@@ -58,8 +58,8 @@ open class PickerAdapter(
      * @author Artem Chepurnoy
      */
     class Holder(
-            view: View,
-            listener: OnItemClickListener<Int>
+        view: View,
+        listener: OnItemClickListener<Int>
     ) : AdapterBase.ViewHolderBase(view, listener), View.OnClickListener {
 
         internal val checkImageView = view.findViewById<ImageView>(R.id.iconImageView)

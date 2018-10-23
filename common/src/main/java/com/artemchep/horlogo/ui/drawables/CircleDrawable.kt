@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
+import com.artemchep.horlogo.extensions.radius
 
 /**
  * @author Artem Chepurnoy
@@ -36,10 +37,7 @@ class CircleDrawable(@ColorInt c: Int = 0) : Drawable() {
      */
     override fun draw(canvas: Canvas) {
         val rect = bounds
-        canvas.drawCircle(
-                rect.exactCenterX(),
-                rect.exactCenterY(),
-                Math.min(rect.height(), rect.width()) / 2f, paint)
+        canvas.drawCircle(rect.exactCenterX(), rect.exactCenterY(), rect.radius, paint)
     }
 
     /**

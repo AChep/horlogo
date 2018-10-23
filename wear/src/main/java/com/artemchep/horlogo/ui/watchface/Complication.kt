@@ -3,23 +3,22 @@ package com.artemchep.horlogo.ui.watchface
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
-import android.support.wearable.complications.ComplicationData
 
 /**
  * @author Artem Chepurnoy
  */
 data class Complication(
-        var normalIconDrawable: Drawable? = null,
-        var ambientIconDrawable: Drawable? = null,
-        var longMsg: CharSequence? = null,
-        var shortMsg: CharSequence? = null,
-        var isActive: Boolean = false,
+    var normalIconDrawable: Drawable? = null,
+    var ambientIconDrawable: Drawable? = null,
+    var longMsg: CharSequence? = null,
+    var shortMsg: CharSequence? = null,
+    var isActive: Boolean = false,
 
-        /**
-         * Reference to source complication data, that was used to
-         * create this instance.
-         */
-        val raw: ComplicationData
+    /**
+     * Reference to source complication data, that was used to
+     * create this instance.
+     */
+    val raw: ComplicationData
 ) {
 
     fun refreshActive() {

@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.text.format.DateFormat
 import android.util.AttributeSet
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.artemchep.horlogo.*
 import com.artemchep.horlogo.ui.drawables.EmptyDrawable
@@ -18,9 +17,9 @@ import java.util.*
  * @author Artem Chepurnoy
  */
 class WatchFaceView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var dividerTextView: TextView? = null
@@ -62,11 +61,12 @@ class WatchFaceView @JvmOverloads constructor(
      * text views.
      */
     fun setAntiAlias(isEnabled: Boolean) {
-        listOf(hourTextView, minuteTextView,
-                complication1TextView,
-                complication2TextView,
-                complication3TextView,
-                complication4TextView
+        listOf(
+            hourTextView, minuteTextView,
+            complication1TextView,
+            complication2TextView,
+            complication3TextView,
+            complication4TextView
         ).forEach {
             it.paint.isAntiAlias = isEnabled
         }
@@ -80,10 +80,11 @@ class WatchFaceView @JvmOverloads constructor(
 
         // Set complications color
         val tintList = ColorStateList.valueOf(theme.complicationColor)
-        listOf(complication1TextView,
-                complication2TextView,
-                complication3TextView,
-                complication4TextView
+        listOf(
+            complication1TextView,
+            complication2TextView,
+            complication3TextView,
+            complication4TextView
         ).forEach {
             it.setTextColor(theme.complicationColor)
             it.compoundDrawableTintList = tintList

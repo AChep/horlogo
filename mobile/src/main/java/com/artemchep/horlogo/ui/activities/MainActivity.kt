@@ -39,11 +39,11 @@ import java.util.*
  * @author Artem Chepurnoy
  */
 class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
-        DataClient.OnDataChangedListener,
-        Config.OnConfigChangedListener<String>,
-        PickerDialog.PickerDialogCallback,
-        OnItemClickListener<ConfigItem>,
-        View.OnClickListener {
+    DataClient.OnDataChangedListener,
+    Config.OnConfigChangedListener<String>,
+    PickerDialog.PickerDialogCallback,
+    OnItemClickListener<ConfigItem>,
+    View.OnClickListener {
 
     override val view: IMainView = this
 
@@ -71,6 +71,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
         actionAboutBtn.setOnClickListener(this)
 
         adapter = MainAdapter(presenter.items).apply {
+            // Handle item click
             onItemClickListener = this@MainActivity
         }
 
@@ -85,7 +86,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
     override fun onStart() {
         super.onStart()
         Cfg.addListener(this)
-        dataClient.addListener(this)
+        //dataClient.addListener(this)
 
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_TIMEZONE_CHANGED)
@@ -100,7 +101,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
 
     override fun onStop() {
         unregisterReceiver(broadcastReceiver)
-        dataClient.removeListener(this)
+        //dataClient.removeListener(this)
         Cfg.removeListener(this)
         super.onStop()
     }
@@ -125,9 +126,11 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
                 Cfg.KEY_LAYOUT -> request.dataMap.putString(key, Cfg.layoutName)
             }
 
-            dataClient.putDataItem(request
+            dataClient.putDataItem(
+                request
                     .asPutDataRequest()
-                    .setUrgent())
+                    .setUrgent()
+            )
         }
     }
 
@@ -191,22 +194,22 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
         }
 
         watchFaceView = LayoutInflater
-                .from(this)
-                .inflate(layoutRes, null, false)
-                .let { it as WatchFaceView }
-                .apply {
-                    isDrawingCacheEnabled = true
-                    setAntiAlias(true)
+            .from(this)
+            .inflate(layoutRes, null, false)
+            .let { it as WatchFaceView }
+            .apply {
+                isDrawingCacheEnabled = true
+                setAntiAlias(true)
 
-                    // Set complications
-                    val weatherIcon = getDrawable(R.drawable.ic_weather_partly_cloudy)
-                    setComplicationContentText(WATCH_COMPLICATION_FIRST, "Partly cloudy")
-                    setComplicationIcon(WATCH_COMPLICATION_FIRST, weatherIcon)
+                // Set complications
+                val weatherIcon = getDrawable(R.drawable.ic_weather_partly_cloudy)
+                setComplicationContentText(WATCH_COMPLICATION_FIRST, "Partly cloudy")
+                setComplicationIcon(WATCH_COMPLICATION_FIRST, weatherIcon)
 
-                    val batteryIcon = getDrawable(R.drawable.ic_battery)
-                    setComplicationContentText(WATCH_COMPLICATION_SECOND, "100%")
-                    setComplicationIcon(WATCH_COMPLICATION_SECOND, batteryIcon)
-                }
+                val batteryIcon = getDrawable(R.drawable.ic_battery)
+                setComplicationContentText(WATCH_COMPLICATION_SECOND, "100%")
+                setComplicationIcon(WATCH_COMPLICATION_SECOND, batteryIcon)
+            }
 
         updateWatchFaceTheme()
         updateWatchFaceTime()
@@ -268,13 +271,18 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
         adapter.tellItemChanged(position)
     }
 
-    override fun showPickerScreenForResult(title: String?, key: String, items: List<ConfigPickerItem>, resultCode: Int) {
+    override fun showPickerScreenForResult(
+        title: String?,
+        key: String,
+        items: List<ConfigPickerItem>,
+        resultCode: Int
+    ) {
         val dialog = PickerDialog.create(resultCode, key, title, ArrayList(items))
         dialog.show(supportFragmentManager, PickerDialog.TAG)
     }
 
     override fun showComplicationsScreen() {
-        throw IllegalStateException("Mobile devices can not have complications screen")
+        error("Mobile devices can not have complications screen")
     }
 
     override fun showAboutScreen() {

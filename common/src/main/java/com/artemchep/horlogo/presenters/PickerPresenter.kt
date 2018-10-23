@@ -8,8 +8,8 @@ import com.artemchep.horlogo.ui.model.ConfigPickerItem
  * @author Artem Chepurnoy
  */
 class PickerPresenter(
-        private val key: String?,
-        private val items: List<ConfigPickerItem>
+    private val key: String?,
+    private val items: List<ConfigPickerItem>
 ) : IPickerPresenter {
 
     override var view: IPickerView? = null

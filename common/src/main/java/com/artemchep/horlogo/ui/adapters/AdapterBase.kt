@@ -10,12 +10,12 @@ import com.artemchep.horlogo.ui.interfaces.OnItemClickListener
  * @author Artem Chepurnoy
  */
 abstract class AdapterBase<M, H : RecyclerView.ViewHolder>(
-        /**
-         * List of models to be shown. Changing this list in future will
-         * affect the adapter, so don't forget to notify it about data
-         * set change.
-         */
-        val models: MutableList<M>
+    /**
+     * List of models to be shown. Changing this list in future will
+     * affect the adapter, so don't forget to notify it about data
+     * set change.
+     */
+    val models: MutableList<M>
 ) : RecyclerView.Adapter<H>(), OnItemClickListener<Int> {
 
     /**
@@ -49,8 +49,8 @@ abstract class AdapterBase<M, H : RecyclerView.ViewHolder>(
      * @author Artem Chepurnoy
      */
     open class ViewHolderBase(
-            itemView: View,
-            private val listener: OnItemClickListener<Int>
+        itemView: View,
+        private val listener: OnItemClickListener<Int>
     ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         override fun onClick(view: View) {

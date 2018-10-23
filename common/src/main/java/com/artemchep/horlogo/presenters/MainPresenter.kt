@@ -51,24 +51,24 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
      * names.
      */
     private val paletteMap = mapOf(
-            PALETTE_RED to getString(R.string.red),
-            PALETTE_PINK to getString(R.string.pink),
-            PALETTE_PURPLE to getString(R.string.purple),
-            PALETTE_DEEP_PURPLE to getString(R.string.deep_purple),
-            PALETTE_INDIGO to getString(R.string.indigo),
-            PALETTE_BLUE to getString(R.string.blue),
-            PALETTE_CYAN to getString(R.string.cyan),
-            PALETTE_TEAL to getString(R.string.teal),
-            PALETTE_GREEN to getString(R.string.green),
-            PALETTE_LIGHT_GREEN to getString(R.string.light_green),
-            PALETTE_LIME to getString(R.string.lime),
-            PALETTE_YELLOW to getString(R.string.yellow),
-            PALETTE_AMBER to getString(R.string.amber),
-            PALETTE_ORANGE to getString(R.string.orange),
-            PALETTE_DEEP_ORANGE to getString(R.string.deep_orange),
-            PALETTE_BROWN to getString(R.string.brown),
-            PALETTE_GREY to getString(R.string.grey),
-            PALETTE_WHITE to getString(R.string.white)
+        PALETTE_RED to getString(R.string.red),
+        PALETTE_PINK to getString(R.string.pink),
+        PALETTE_PURPLE to getString(R.string.purple),
+        PALETTE_DEEP_PURPLE to getString(R.string.deep_purple),
+        PALETTE_INDIGO to getString(R.string.indigo),
+        PALETTE_BLUE to getString(R.string.blue),
+        PALETTE_CYAN to getString(R.string.cyan),
+        PALETTE_TEAL to getString(R.string.teal),
+        PALETTE_GREEN to getString(R.string.green),
+        PALETTE_LIGHT_GREEN to getString(R.string.light_green),
+        PALETTE_LIME to getString(R.string.lime),
+        PALETTE_YELLOW to getString(R.string.yellow),
+        PALETTE_AMBER to getString(R.string.amber),
+        PALETTE_ORANGE to getString(R.string.orange),
+        PALETTE_DEEP_ORANGE to getString(R.string.deep_orange),
+        PALETTE_BROWN to getString(R.string.brown),
+        PALETTE_GREY to getString(R.string.grey),
+        PALETTE_WHITE to getString(R.string.white)
     )
 
     /**
@@ -76,9 +76,9 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
      * names
      */
     private val themeMap = mapOf(
-            Cfg.THEME_BLACK to getString(R.string.theme_black),
-            Cfg.THEME_DARK to getString(R.string.theme_dark),
-            Cfg.THEME_LIGHT to getString(R.string.theme_light)
+        Cfg.THEME_BLACK to getString(R.string.theme_black),
+        Cfg.THEME_DARK to getString(R.string.theme_dark),
+        Cfg.THEME_LIGHT to getString(R.string.theme_light)
     )
 
     /**
@@ -86,8 +86,8 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
      * names
      */
     private val layoutMap = mapOf(
-            Cfg.LAYOUT_VERTICAL to getString(R.string.layout_vertical),
-            Cfg.LAYOUT_HORIZONTAL to getString(R.string.layout_horizontal)
+        Cfg.LAYOUT_VERTICAL to getString(R.string.layout_vertical),
+        Cfg.LAYOUT_HORIZONTAL to getString(R.string.layout_horizontal)
     )
 
     //
@@ -130,16 +130,16 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
 
     private fun updateSingleItem(id: Int, summary: String?, notifyItemChanged: Boolean) {
         items
-                .indexOfFirst { it.id == id }
-                .also { position ->
-                    items[position].summary = summary
+            .indexOfFirst { it.id == id }
+            .also { position ->
+                items[position].summary = summary
 
-                    if (notifyItemChanged) {
-                        // Tell view to update the item at
-                        // position
-                        view?.notifyItemChanged(position)
-                    }
+                if (notifyItemChanged) {
+                    // Tell view to update the item at
+                    // position
+                    view?.notifyItemChanged(position)
                 }
+            }
     }
 
     override fun onPause() {
@@ -196,7 +196,13 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
                 // Show the picker for accent and
                 // wait for the result.
                 val title = getString(R.string.config_accent)
-                val items = paletteMap.map { (color, name) -> ConfigPickerItem(color.toString(), color, name) }
+                val items = paletteMap.map { (color, name) ->
+                    ConfigPickerItem(
+                        color.toString(),
+                        color,
+                        name
+                    )
+                }
                 val current = Cfg.accentColor.toString()
                 view!!.showPickerScreenForResult(title, current, items, REQUEST_CODE_ACCENT_COLOR)
             }
@@ -206,6 +212,7 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
 
     protected fun getString(@StringRes stringRes: Int): String = context.getString(stringRes)
 
-    protected fun getDrawable(@DrawableRes drawableRes: Int): Drawable = context.getDrawable(drawableRes)
+    protected fun getDrawable(@DrawableRes drawableRes: Int): Drawable =
+        context.getDrawable(drawableRes)!!
 
 }

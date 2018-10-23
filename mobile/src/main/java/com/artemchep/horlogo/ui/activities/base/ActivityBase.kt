@@ -10,7 +10,8 @@ import com.artemchep.horlogo.interfaces.Toastable
 /**
  * @author Artem Chepurnoy
  */
-abstract class ActivityBase<V : IView<V, P>, P : IPresenter<P, V>> : AppCompatActivity(), Toastable {
+abstract class ActivityBase<V : IView<V, P>, P : IPresenter<P, V>> : AppCompatActivity(),
+    Toastable {
 
     abstract val view: V
 

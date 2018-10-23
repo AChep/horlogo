@@ -9,9 +9,9 @@ import com.artemchep.horlogo.ui.Fonts
  * @author Artem Chepurnoy
  */
 class BrandTextView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
 
     init {

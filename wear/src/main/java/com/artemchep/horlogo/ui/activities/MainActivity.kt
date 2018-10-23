@@ -19,8 +19,8 @@ import kotlinx.android.synthetic.main.activity_config.*
  * @author Artem Chepurnoy
  */
 class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
-        IMainView,
-        OnItemClickListener<ConfigItem> {
+    IMainView,
+    OnItemClickListener<ConfigItem> {
 
     override val view: IMainView = this
 
@@ -65,7 +65,12 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(),
         adapter.tellItemChanged(position)
     }
 
-    override fun showPickerScreenForResult(title: String?, key: String, items: List<ConfigPickerItem>, resultCode: Int) {
+    override fun showPickerScreenForResult(
+        title: String?,
+        key: String,
+        items: List<ConfigPickerItem>,
+        resultCode: Int
+    ) {
         val intent = PickerActivity.newIntent(this, key, title, ArrayList(items))
         startActivityForResult(intent, resultCode)
     }

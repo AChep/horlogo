@@ -3,7 +3,6 @@ package com.artemchep.horlogo.ui.dialogs
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.TextView
-import com.afollestad.materialdialogs.MaterialDialog
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IAboutPresenter
 import com.artemchep.horlogo.contracts.IAboutView
@@ -17,8 +16,6 @@ import com.artemchep.horlogo.ui.dialogs.base.DialogBase
 class AboutDialog : DialogBase<IAboutView, IAboutPresenter>(), IAboutView {
 
     companion object {
-        const val TAG = "AboutDialog"
-
         private const val EMPTY_TEXT = ""
     }
 
@@ -29,23 +26,23 @@ class AboutDialog : DialogBase<IAboutView, IAboutPresenter>(), IAboutView {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val md = MaterialDialog.Builder(context!!)
-                .title(EMPTY_TEXT) // to inject content view into layout
-                .content(EMPTY_TEXT) // to inject content view into layout
-                .negativeText(R.string.action_close)
-                .build()
+            .title(EMPTY_TEXT) // to inject content view into layout
+            .content(EMPTY_TEXT) // to inject content view into layout
+            .negativeText(R.string.action_close)
+            .build()
         titleView = md.titleView.apply {
             setOnClickListener {
                 presenter.navigateTo(IAboutPresenter.Destination.BUILD_INFO)
             }
             // Apply the branded look to
             // title.
-            typeface = Fonts.getTypeface(requireContext().assets)
+            typeface = Fonts.getTypeface(context!!.assets)
         }
         contentView = md.contentView!!
         return md
     }
 
-    override fun createPresenter(): IAboutPresenter = AboutPresenter(requireContext())
+    override fun createPresenter(): IAboutPresenter = AboutPresenter(context!!)
 
     override fun setTitleText(title: CharSequence) {
         titleView.text = title

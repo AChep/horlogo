@@ -3,10 +3,6 @@ package com.artemchep.horlogo.ui.watchface
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.support.wearable.complications.ComplicationData
-import android.support.wearable.watchface.CanvasWatchFaceService
-import android.support.wearable.watchface.WatchFaceService
-import android.support.wearable.watchface.WatchFaceStyle
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
@@ -16,7 +12,6 @@ import com.artemchep.config.Config
 import com.artemchep.horlogo.Cfg
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.WATCH_COMPLICATIONS
-import com.artemchep.horlogo.extensions.findViewByLocation
 import com.artemchep.horlogo.ui.model.Theme
 import com.artemchep.horlogo.ui.views.WatchFaceView
 import com.artemchep.horlogo.util.TimezoneManager
@@ -40,7 +35,8 @@ class WatchFaceService : CanvasWatchFaceService() {
     /**
      * @author Artem Chepurnoy
      */
-    open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(), Config.OnConfigChangedListener<String> {
+    open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(),
+        Config.OnConfigChangedListener<String> {
 
         private lateinit var view: WatchFaceView
 
@@ -52,10 +48,10 @@ class WatchFaceService : CanvasWatchFaceService() {
          * Ambient theme used when in ambient mode.
          */
         private val themeAmbient = Theme(
-                backgroundColor = Color.BLACK,
-                clockHourColor = Color.WHITE,
-                clockMinuteColor = Color.GRAY,
-                complicationColor = Color.LTGRAY
+            backgroundColor = Color.BLACK,
+            clockHourColor = Color.WHITE,
+            clockMinuteColor = Color.GRAY,
+            complicationColor = Color.LTGRAY
         )
 
         private var configRegistration: Config.Registration<String>? = null
@@ -79,9 +75,11 @@ class WatchFaceService : CanvasWatchFaceService() {
             iconLoaderDispatcher = newSingleThreadContext(TAG)
 
             setActiveComplications(*WATCH_COMPLICATIONS)
-            setWatchFaceStyle(WatchFaceStyle.Builder(this@WatchFaceService)
+            setWatchFaceStyle(
+                WatchFaceStyle.Builder(this@WatchFaceService)
                     .setAcceptsTapEvents(true)
-                    .build())
+                    .build()
+            )
 
             val layoutName = Cfg.layoutName
             val layoutRes = when (layoutName) {
@@ -90,14 +88,14 @@ class WatchFaceService : CanvasWatchFaceService() {
             }
 
             view = LayoutInflater
-                    .from(this@WatchFaceService)
-                    .inflate(layoutRes, null, false)
-                    .let { it as WatchFaceView }
-                    .apply {
-                        isDrawingCacheEnabled = false
-                        // Set the layout name as a tag
-                        tag = layoutName
-                    }
+                .from(this@WatchFaceService)
+                .inflate(layoutRes, null, false)
+                .let { it as WatchFaceView }
+                .apply {
+                    isDrawingCacheEnabled = false
+                    // Set the layout name as a tag
+                    tag = layoutName
+                }
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
@@ -155,32 +153,32 @@ class WatchFaceService : CanvasWatchFaceService() {
             }
 
             view = LayoutInflater
-                    .from(this@WatchFaceService)
-                    .inflate(layoutRes, null, false)
-                    .let { it as WatchFaceView }
-                    .apply {
-                        isDrawingCacheEnabled = false
-                        setAntiAlias(!isInAmbientMode)
-                        setTime(calendar)
+                .from(this@WatchFaceService)
+                .inflate(layoutRes, null, false)
+                .let { it as WatchFaceView }
+                .apply {
+                    isDrawingCacheEnabled = false
+                    setAntiAlias(!isInAmbientMode)
+                    setTime(calendar)
 
-                        // Set complications
-                        complicationDataSparse.forEach { key, value ->
-                            val text = value.run { longMsg ?: shortMsg }
-                            val icon = value.run {
-                                // Return the ambient icon if not null & in ambient mode, or
-                                // normal one.
-                                ambientIconDrawable
-                                        ?.takeIf { isInAmbientMode }
-                                        ?: normalIconDrawable
-                            }
-
-                            setComplicationContentText(key, text)
-                            setComplicationIcon(key, icon)
+                    // Set complications
+                    complicationDataSparse.forEach { key, value ->
+                        val text = value.run { longMsg ?: shortMsg }
+                        val icon = value.run {
+                            // Return the ambient icon if not null & in ambient mode, or
+                            // normal one.
+                            ambientIconDrawable
+                                ?.takeIf { isInAmbientMode }
+                                ?: normalIconDrawable
                         }
 
-                        // Set the layout name as a tag
-                        tag = layoutName
+                        setComplicationContentText(key, text)
+                        setComplicationIcon(key, icon)
                     }
+
+                    // Set the layout name as a tag
+                    tag = layoutName
+                }
 
             bindTheme()
         }
@@ -248,11 +246,15 @@ class WatchFaceService : CanvasWatchFaceService() {
             invalidate()
         }
 
-        override fun onComplicationDataUpdate(watchFaceComplicationId: Int, data: ComplicationData?) {
+        override fun onComplicationDataUpdate(
+            watchFaceComplicationId: Int,
+            data: ComplicationData?
+        ) {
             super.onComplicationDataUpdate(watchFaceComplicationId, data)
             if (data == null
-                    || (data.shortText == null && data.shortTitle == null
-                            && data.longText == null && data.longTitle == null)) {
+                || (data.shortText == null && data.shortTitle == null
+                        && data.longText == null && data.longTitle == null)
+            ) {
                 complicationDataSparse.remove(watchFaceComplicationId)
                 view.apply {
                     setComplicationIcon(watchFaceComplicationId, null)
@@ -299,8 +301,8 @@ class WatchFaceService : CanvasWatchFaceService() {
                 // Return the ambient icon if not null & in ambient mode, or
                 // normal one.
                 ambientIconDrawable
-                        ?.takeIf { isInAmbientMode }
-                        ?: normalIconDrawable
+                    ?.takeIf { isInAmbientMode }
+                    ?: normalIconDrawable
             }
 
             view.setComplicationIcon(id, icon)
@@ -328,7 +330,12 @@ class WatchFaceService : CanvasWatchFaceService() {
             view.setTheme(if (isInAmbientMode) themeAmbient else theme)
         }
 
-        override fun onSurfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+        override fun onSurfaceChanged(
+            holder: SurfaceHolder?,
+            format: Int,
+            width: Int,
+            height: Int
+        ) {
             super.onSurfaceChanged(holder, format, width, height)
             this.width = width
             this.height = height

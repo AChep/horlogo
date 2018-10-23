@@ -3,6 +3,9 @@
     <dimen name="margin_horizontal">16dp</dimen>
     <dimen name="margin_vertical">16dp</dimen>
 
+    <dimen name="watch_size">240dp</dimen>
+    <dimen name="watch_band_width">120dp</dimen>
+
     <dimen name="watchface_start_padding">32dp</dimen>
     <dimen name="watchface_end_padding">32dp</dimen>
 

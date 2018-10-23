@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import com.afollestad.materialdialogs.MaterialDialog
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.ui.Fonts
 import com.artemchep.horlogo.ui.model.ConfigPickerItem
@@ -22,7 +21,12 @@ class PickerDialog : DialogFragment() {
         private val EXTRA_ITEMS = "extra::items"
         private val EXTRA_RC = "extra::rc"
 
-        fun create(requestCode: Int, key: String, title: String?, items: ArrayList<ConfigPickerItem>): PickerDialog {
+        fun create(
+            requestCode: Int,
+            key: String,
+            title: String?,
+            items: ArrayList<ConfigPickerItem>
+        ): PickerDialog {
             return PickerDialog().apply {
                 val bundle = Bundle().apply {
                     putParcelableArrayList(EXTRA_ITEMS, items)
@@ -41,19 +45,19 @@ class PickerDialog : DialogFragment() {
 
         val key = args.getString(EXTRA_KEY)
         val requestCode = args.getInt(EXTRA_RC)
-        val items = args.getParcelableArrayList<ConfigPickerItem>(EXTRA_ITEMS)
+        val items = args.getParcelableArrayList<ConfigPickerItem>(EXTRA_ITEMS)!!
 
         val md = MaterialDialog.Builder(context!!)
-                .title(args.getString(EXTRA_TITLE))
-                .items(items.map { it.title })
-                .itemsCallback { dialog, itemView, position, text ->
-                    val a = activity
-                    if (a is PickerDialogCallback) {
-                        a.onSingleItemPicked(requestCode, Activity.RESULT_OK, items[position].key)
-                    }
+            .title(args.getString(EXTRA_TITLE))
+            .items(items.map { it.title })
+            .itemsCallback { dialog, itemView, position, text ->
+                val a = activity
+                if (a is PickerDialogCallback) {
+                    a.onSingleItemPicked(requestCode, Activity.RESULT_OK, items[position].key)
                 }
-                .negativeText(R.string.action_close)
-                .build()
+            }
+            .negativeText(R.string.action_close)
+            .build()
         md.titleView.apply {
             // Apply the branded look to
             // title.

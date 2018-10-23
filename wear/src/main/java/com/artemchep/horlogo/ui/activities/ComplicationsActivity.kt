@@ -2,8 +2,6 @@ package com.artemchep.horlogo.ui.activities
 
 import android.content.ComponentName
 import android.os.Bundle
-import android.support.wearable.complications.ComplicationData
-import android.support.wearable.complications.ComplicationHelperActivity
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.artemchep.horlogo.R
@@ -22,9 +20,9 @@ import kotlinx.android.synthetic.main.activity_config_complications.*
  * @author Artem Chepurnoy
  */
 class ComplicationsActivity : ActivityBase<IComplicationsView, IComplicationsPresenter>(),
-        IComplicationsView,
-        View.OnClickListener,
-        OnItemClickListener<ConfigItem> {
+    IComplicationsView,
+    View.OnClickListener,
+    OnItemClickListener<ConfigItem> {
 
     override val view: IComplicationsView = this
 
@@ -88,14 +86,19 @@ class ComplicationsActivity : ActivityBase<IComplicationsView, IComplicationsPre
 
     override fun showComplicationChooser(complicationId: Int) {
         val supportedTypes = intArrayOf(
-                ComplicationData.TYPE_RANGED_VALUE,
-                ComplicationData.TYPE_ICON,
-                ComplicationData.TYPE_SHORT_TEXT,
-                ComplicationData.TYPE_SMALL_IMAGE
+            ComplicationData.TYPE_RANGED_VALUE,
+            ComplicationData.TYPE_ICON,
+            ComplicationData.TYPE_SHORT_TEXT,
+            ComplicationData.TYPE_SMALL_IMAGE
         )
 
         val watchFace = ComponentName(this, WatchFaceService::class.java)
-        val intent = ComplicationHelperActivity.createProviderChooserHelperIntent(this, watchFace, complicationId, *supportedTypes)
+        val intent = ComplicationHelperActivity.createProviderChooserHelperIntent(
+            this,
+            watchFace,
+            complicationId,
+            *supportedTypes
+        )
         startActivity(intent)
     }
 

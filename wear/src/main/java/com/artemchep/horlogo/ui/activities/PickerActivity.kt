@@ -20,8 +20,8 @@ import kotlinx.android.synthetic.main.activity_config.*
  * @author Artem Chepurnoy
  */
 class PickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
-        IPickerView,
-        OnItemClickListener<ConfigPickerItem> {
+    IPickerView,
+    OnItemClickListener<ConfigPickerItem> {
 
     companion object {
         private const val EXTRA_KEY = "extra::key"
@@ -29,7 +29,12 @@ class PickerActivity : ActivityBase<IPickerView, IPickerPresenter>(),
         private const val EXTRA_ITEMS = "extra::items"
         const val RESULT_KEY = "result::key"
 
-        fun newIntent(context: Context, key: String, title: String?, items: ArrayList<ConfigPickerItem>): Intent {
+        fun newIntent(
+            context: Context,
+            key: String,
+            title: String?,
+            items: ArrayList<ConfigPickerItem>
+        ): Intent {
             return Intent(context, PickerActivity::class.java).apply {
                 putParcelableArrayListExtra(EXTRA_ITEMS, items)
                 putExtra(EXTRA_KEY, key)

@@ -14,7 +14,12 @@ interface IMainView : IView<IMainView, IMainPresenter> {
 
     fun notifyItemChanged(position: Int)
 
-    fun showPickerScreenForResult(title: String?, key: String, items: List<ConfigPickerItem>, resultCode: Int)
+    fun showPickerScreenForResult(
+        title: String?,
+        key: String,
+        items: List<ConfigPickerItem>,
+        resultCode: Int
+    )
 
     fun showComplicationsScreen()
 
