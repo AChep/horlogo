@@ -3,6 +3,9 @@ package com.artemchep.horlogo.ui.watchface
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.support.wearable.complications.ComplicationData
+import android.support.wearable.watchface.CanvasWatchFaceService
+import android.support.wearable.watchface.WatchFaceStyle
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
@@ -12,6 +15,7 @@ import com.artemchep.config.Config
 import com.artemchep.horlogo.Cfg
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.WATCH_COMPLICATIONS
+import com.artemchep.horlogo.extensions.findViewByLocation
 import com.artemchep.horlogo.ui.model.Theme
 import com.artemchep.horlogo.ui.views.WatchFaceView
 import com.artemchep.horlogo.util.TimezoneManager
@@ -366,9 +370,9 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         override fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long) {
             super.onTapCommand(tapType, x, y, eventTime)
-            if (tapType != WatchFaceService.TAP_TYPE_TAP) {
-                return
-            }
+//            if (tapType != WatchFaceService.TAP_TYPE_TAP) {
+//                return
+//            }
 
             val target = view.findViewByLocation(x, y)
             target?.tag?.let { it as? Int }?.also { id ->

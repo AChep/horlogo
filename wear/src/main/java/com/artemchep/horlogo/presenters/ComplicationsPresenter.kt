@@ -2,6 +2,8 @@ package com.artemchep.horlogo.presenters
 
 import android.content.ComponentName
 import android.content.Context
+import android.support.wearable.complications.ComplicationProviderInfo
+import android.support.wearable.complications.ProviderInfoRetriever
 import android.util.SparseBooleanArray
 import com.artemchep.horlogo.*
 import com.artemchep.horlogo.contracts.IComplicationsPresenter

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.text.format.DateFormat
 import android.util.AttributeSet
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.artemchep.horlogo.*
 import com.artemchep.horlogo.ui.drawables.EmptyDrawable

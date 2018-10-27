@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="0.5" />
+        app:layout_constraintVertical_weight="0.55" />
 
     <Space
         android:id="@+id/content"
@@ -19,7 +19,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clock"
-        app:layout_constraintVertical_weight="0.5" />
+        app:layout_constraintVertical_weight="0.45" />
 
     <!--
         Digital clock
@@ -37,8 +37,8 @@
         android:lineSpacingExtra="0dp"
         android:lineSpacingMultiplier="1.0"
         android:maxLines="1"
-        android:textScaleX="0.9"
-        android:textSize="62sp"
+        android:textScaleX="0.95"
+        android:textSize="64sp"
         app:layout_constraintBottom_toBottomOf="@id/clock"
         app:layout_constraintEnd_toStartOf="@id/divider"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -58,8 +58,8 @@
         android:lineSpacingMultiplier="1.0"
         android:maxLines="1"
         android:text=":"
-        android:textScaleX="0.9"
-        android:textSize="62sp"
+        android:textScaleX="0.95"
+        android:textSize="64sp"
         app:layout_constraintBottom_toBottomOf="@id/clock"
         app:layout_constraintEnd_toStartOf="@id/minute"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -78,8 +78,8 @@
         android:lineSpacingExtra="0dp"
         android:lineSpacingMultiplier="1.0"
         android:maxLines="1"
-        android:textScaleX="0.9"
-        android:textSize="62sp"
+        android:textScaleX="0.95"
+        android:textSize="64sp"
         app:layout_constraintBottom_toBottomOf="@id/clock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"

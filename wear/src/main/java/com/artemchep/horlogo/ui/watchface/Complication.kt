@@ -3,6 +3,7 @@ package com.artemchep.horlogo.ui.watchface
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
+import android.support.wearable.complications.ComplicationData
 
 /**
  * @author Artem Chepurnoy

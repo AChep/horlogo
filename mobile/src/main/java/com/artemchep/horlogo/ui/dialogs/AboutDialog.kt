@@ -3,6 +3,7 @@ package com.artemchep.horlogo.ui.dialogs
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.contracts.IAboutPresenter
 import com.artemchep.horlogo.contracts.IAboutView
@@ -16,6 +17,8 @@ import com.artemchep.horlogo.ui.dialogs.base.DialogBase
 class AboutDialog : DialogBase<IAboutView, IAboutPresenter>(), IAboutView {
 
     companion object {
+        const val TAG = "AboutDialog"
+
         private const val EMPTY_TEXT = ""
     }
 

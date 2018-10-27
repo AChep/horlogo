@@ -65,7 +65,7 @@ android {
 
 dependencies {
     implementation project(":common")
-    implementation project(":config:app")
+    implementation project(":config")
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"

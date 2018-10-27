@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import com.afollestad.materialdialogs.MaterialDialog
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.ui.Fonts
 import com.artemchep.horlogo.ui.model.ConfigPickerItem

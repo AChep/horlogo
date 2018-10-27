@@ -34,7 +34,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.util.*
 
-
 /**
  * @author Artem Chepurnoy
  */
@@ -177,7 +176,7 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
             }
         }
 
-        Cfg.edit {
+        Cfg.edit(this) {
             actions.forEach { it() }
         }
     }
