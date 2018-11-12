@@ -4,8 +4,8 @@ buildscript {
     ext.sdk_min = 23
     ext.sdk_target = 28
 
-    ext.version_code = 9
-    ext.version_name = '2.0.1'
+    ext.version_code = 10
+    ext.version_name = '2.0.2'
 
     ext.kotlin_version = '1.2.71'
     ext.kotlin_coroutines_version = '0.25.0'
