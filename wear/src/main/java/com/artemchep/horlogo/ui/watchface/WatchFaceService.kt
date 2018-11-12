@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.watchface.CanvasWatchFaceService
+import android.support.wearable.watchface.WatchFaceService
 import android.support.wearable.watchface.WatchFaceStyle
 import android.util.SparseArray
 import android.view.LayoutInflater
@@ -370,9 +371,9 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         override fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long) {
             super.onTapCommand(tapType, x, y, eventTime)
-//            if (tapType != WatchFaceService.TAP_TYPE_TAP) {
-//                return
-//            }
+            if (tapType != WatchFaceService.TAP_TYPE_TAP) {
+                return
+            }
 
             val target = view.findViewByLocation(x, y)
             target?.tag?.let { it as? Int }?.also { id ->
