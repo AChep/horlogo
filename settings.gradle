@@ -1,4 +1,3 @@
 include ':wear'
 include ':mobile'
 include ':common'
-include ':config'

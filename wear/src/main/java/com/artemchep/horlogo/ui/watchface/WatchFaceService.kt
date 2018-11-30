@@ -113,7 +113,7 @@ class WatchFaceService : CanvasWatchFaceService() {
             configRegistration?.unregister()
 
             if (visible) {
-                configRegistration = Cfg.addListener(this)
+                configRegistration = Cfg.observe(this)
                 timeZoneManager.start {
                     calendar.timeZone = TimeZone.getDefault()
                     onTimeTick()

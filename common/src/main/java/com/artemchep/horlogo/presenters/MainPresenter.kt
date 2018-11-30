@@ -99,7 +99,7 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
 
         // Listen to the config changes and update the
         // user interface.
-        Cfg.addListener(configListener)
+        Cfg.observe(configListener)
 
         // Update the interface, cause the config could change
         // while we were paused.
@@ -145,7 +145,7 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
     override fun onPause() {
         // Stop listening to the config
         // changes
-        Cfg.removeListener(configListener)
+        Cfg.removeObserver(configListener)
         super.onPause()
     }
 
