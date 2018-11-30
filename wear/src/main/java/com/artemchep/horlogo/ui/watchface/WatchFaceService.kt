@@ -20,11 +20,9 @@ import com.artemchep.horlogo.extensions.findViewByLocation
 import com.artemchep.horlogo.ui.model.Theme
 import com.artemchep.horlogo.ui.views.WatchFaceView
 import com.artemchep.horlogo.util.TimezoneManager
-import kotlinx.coroutines.experimental.ThreadPoolDispatcher
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.newSingleThreadContext
+import kotlinx.coroutines.*
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author Artem Chepurnoy
@@ -41,7 +39,8 @@ class WatchFaceService : CanvasWatchFaceService() {
      * @author Artem Chepurnoy
      */
     open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(),
-        Config.OnConfigChangedListener<String> {
+        Config.OnConfigChangedListener<String>,
+    CoroutineScope{
 
         private lateinit var view: WatchFaceView
 
@@ -71,13 +70,17 @@ class WatchFaceService : CanvasWatchFaceService() {
         /** Maps complication ids to corresponding complications data */
         private val complicationDataSparse = SparseArray<Complication>()
 
-        private lateinit var iconLoaderDispatcher: ThreadPoolDispatcher
+        override lateinit var  coroutineContext: CoroutineContext
+
+        private lateinit var coroutineJob: Job
 
         override fun onCreate(holder: SurfaceHolder?) {
             super.onCreate(holder)
             val context = applicationContext
             timeZoneManager = TimezoneManager(context)
-            iconLoaderDispatcher = newSingleThreadContext(TAG)
+
+            coroutineJob = Job()
+            coroutineContext = Dispatchers.Main + coroutineJob
 
             setActiveComplications(*WATCH_COMPLICATIONS)
             setWatchFaceStyle(
@@ -271,11 +274,11 @@ class WatchFaceService : CanvasWatchFaceService() {
                     refreshActive()
                 }
 
-                launch(iconLoaderDispatcher) {
+                launch(Dispatchers.IO) {
                     val normalIcon = data.icon?.loadDrawable(this@WatchFaceService)
                     val ambientIcon = data.burnInProtectionIcon?.loadDrawable(this@WatchFaceService)
 
-                    launch(UI) {
+                    launch(Dispatchers.Main) {
                         complication.normalIconDrawable = normalIcon
                         complication.ambientIconDrawable = ambientIcon
 
@@ -384,7 +387,7 @@ class WatchFaceService : CanvasWatchFaceService() {
         override fun onDestroy() {
             timeZoneManager.stop()
             configRegistration?.unregister()
-            iconLoaderDispatcher.close()
+            coroutineJob.cancel()
             super.onDestroy()
         }
 
