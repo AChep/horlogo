@@ -14,22 +14,17 @@ env:
   - ANDROID_BUILD_TOOLS=27.0.3
 android:
  components:
- - tools
- - platform-tools
  - build-tools-$ANDROID_BUILD_TOOLS
  - android-$ANDROID_API
+ - add-on
+ - extra
  - extra-google-m2repository
  - extra-android-m2repository # for design library
  - addon-google_apis-google-19 # google play services
- licenses:
- - '.+'
 before_install:
 - openssl aes-256-cbc -K $encrypted_3f5ddde1a2e2_key -iv $encrypted_3f5ddde1a2e2_iv
   -in wear/horlogo-release-enc.keystore -out wear/horlogo-release.keystore -d
-- mkdir "$ANDROID_HOME/licenses" || true
-- yes | sdkmanager "platforms;android-$ANDROID_API_LEVEL"
-- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
-- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+- yes | sdkmanager "platforms;android-28"
 script:
 - "./gradlew build check"
 deploy:

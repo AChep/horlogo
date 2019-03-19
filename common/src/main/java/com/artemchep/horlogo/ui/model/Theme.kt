@@ -20,19 +20,19 @@ data class Theme(
         val BLACK = Theme(
             backgroundColor = Color.BLACK,
             clockHourColor = 0xFF546E7A.toInt(),
-            clockMinuteColor = 0xFF6b8c9b.toInt(),
+            clockMinuteColor = Color.GRAY,
             complicationColor = Color.LTGRAY
         )
         val DARK = Theme(
             backgroundColor = 0xFF212121.toInt(),
             clockHourColor = 0xFF546E7A.toInt(),
-            clockMinuteColor = 0xFF6b8c9b.toInt(),
+            clockMinuteColor = Color.GRAY,
             complicationColor = Color.LTGRAY
         )
         val LIGHT = Theme(
             backgroundColor = 0xFFF5F5F5.toInt(),
             clockHourColor = 0xFF78909C.toInt(),
-            clockMinuteColor = 0xFF78909C.toInt(),
+            clockMinuteColor = Color.GRAY,
             complicationColor = Color.DKGRAY
         )
     }
