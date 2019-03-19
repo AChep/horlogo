@@ -24,6 +24,7 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
         private const val REQUEST_CODE_ACCENT_COLOR = 111
         private const val REQUEST_CODE_LAYOUT = 222
         private const val REQUEST_CODE_THEME = 333
+        private const val REQUEST_CODE_GRAYSCALE = 444
     }
 
     override var view: IMainView? = null
@@ -36,6 +37,7 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
                     Cfg.KEY_LAYOUT -> updateLayoutItem()
                     Cfg.KEY_THEME -> updateThemeItem()
                     Cfg.KEY_ACCENT_COLOR -> updateAccentItem()
+                    Cfg.KEY_GRAYSCALE_IN_AMBIENT -> updateGrayscaleItem()
                 }
             }
         }
@@ -90,6 +92,15 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
         Cfg.LAYOUT_HORIZONTAL to getString(R.string.layout_horizontal)
     )
 
+    /**
+     * Map of the grayscale and its
+     * names
+     */
+    private val grayscaleMap = mapOf(
+        true to getString(R.string.grayscale_on),
+        false to getString(R.string.grayscale_off)
+    )
+
     //
     // Items
     //
@@ -110,6 +121,7 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
         updateLayoutItem(false)
         updateThemeItem(false)
         updateAccentItem(false)
+        updateGrayscaleItem(false)
         view!!.notifyDataChanged()
     }
 
@@ -126,6 +138,11 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
     private fun updateAccentItem(notifyItemChanged: Boolean = true) {
         val accentColorName = paletteMap[Cfg.accentColor]
         updateSingleItem(IMainPresenter.ITEM_ACCENT_COLOR, accentColorName, notifyItemChanged)
+    }
+
+    private fun updateGrayscaleItem(notifyItemChanged: Boolean = true) {
+        val grayscaleName = grayscaleMap[Cfg.grayscaleInAmbient]
+        updateSingleItem(IMainPresenter.ITEM_GRAYSCALE, grayscaleName, notifyItemChanged)
     }
 
     private fun updateSingleItem(id: Int, summary: String?, notifyItemChanged: Boolean) {
@@ -161,6 +178,10 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
                 REQUEST_CODE_ACCENT_COLOR -> {
                     val color = key.toInt()
                     Cfg.accentColor = color
+                }
+                REQUEST_CODE_GRAYSCALE -> {
+                    val grayscale = key.toBoolean()
+                    Cfg.grayscaleInAmbient = grayscale
                 }
             }
         }
@@ -205,6 +226,16 @@ abstract class MainPresenter(private val context: Context) : IMainPresenter {
                 }
                 val current = Cfg.accentColor.toString()
                 view!!.showPickerScreenForResult(title, current, items, REQUEST_CODE_ACCENT_COLOR)
+            }
+            IMainPresenter.ITEM_GRAYSCALE -> {
+                // Show the picker for grayscale in an ambient mode and
+                // wait for the result.
+                val title = getString(R.string.config_grayscale)
+                val items = grayscaleMap.map { (key, name) ->
+                    ConfigPickerItem(key.toString(), 0, name)
+                }
+                val current = Cfg.grayscaleInAmbient.toString()
+                view!!.showPickerScreenForResult(title, current, items, REQUEST_CODE_GRAYSCALE)
             }
             IMainPresenter.ITEM_ABOUT -> view!!.showAboutScreen()
         }

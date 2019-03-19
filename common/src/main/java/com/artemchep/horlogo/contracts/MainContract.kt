@@ -43,7 +43,8 @@ interface IMainPresenter : IPresenter<IMainPresenter, IMainView> {
         const val ITEM_LAYOUT = 2
         const val ITEM_THEME = 3
         const val ITEM_ACCENT_COLOR = 4
-        const val ITEM_ABOUT = 5
+        const val ITEM_GRAYSCALE = 5
+        const val ITEM_ABOUT = 6
     }
 
 }

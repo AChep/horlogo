@@ -17,9 +17,11 @@ import com.artemchep.horlogo.Cfg
 import com.artemchep.horlogo.R
 import com.artemchep.horlogo.WATCH_COMPLICATIONS
 import com.artemchep.horlogo.extensions.findViewByLocation
+import com.artemchep.horlogo.sync.DataClientCfgAdapter
 import com.artemchep.horlogo.ui.model.Theme
 import com.artemchep.horlogo.ui.views.WatchFaceView
 import com.artemchep.horlogo.util.TimezoneManager
+import com.google.android.gms.wearable.*
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -40,7 +42,7 @@ class WatchFaceService : CanvasWatchFaceService() {
      */
     open inner class WatchFaceEngine : CanvasWatchFaceService.Engine(),
         Config.OnConfigChangedListener<String>,
-    CoroutineScope{
+        CoroutineScope {
 
         private lateinit var view: WatchFaceView
 
@@ -48,10 +50,13 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         private lateinit var theme: Theme
 
+        private lateinit var themeAmbient: Theme
+
         /**
-         * Ambient theme used when in ambient mode.
+         * Ambient theme used when in ambient mode
+         * when the grayscale is enabled.
          */
-        private val themeAmbient = Theme(
+        private val themeAmbientGrayscale = Theme(
             backgroundColor = Color.BLACK,
             clockHourColor = Color.WHITE,
             clockMinuteColor = Color.GRAY,
@@ -70,7 +75,7 @@ class WatchFaceService : CanvasWatchFaceService() {
         /** Maps complication ids to corresponding complications data */
         private val complicationDataSparse = SparseArray<Complication>()
 
-        override lateinit var  coroutineContext: CoroutineContext
+        override lateinit var coroutineContext: CoroutineContext
 
         private lateinit var coroutineJob: Job
 
@@ -81,6 +86,7 @@ class WatchFaceService : CanvasWatchFaceService() {
 
             coroutineJob = Job()
             coroutineContext = Dispatchers.Main + coroutineJob
+            setupPhoneToWearSync()
 
             setActiveComplications(*WATCH_COMPLICATIONS)
             setWatchFaceStyle(
@@ -104,6 +110,23 @@ class WatchFaceService : CanvasWatchFaceService() {
                     // Set the layout name as a tag
                     tag = layoutName
                 }
+        }
+
+        private fun setupPhoneToWearSync() {
+            val context = this@WatchFaceService
+
+            val dataClient = Wearable.getDataClient(context)
+            val dataListener = DataClientCfgAdapter(context)
+
+            launch {
+                suspendCancellableCoroutine<Unit> {
+                    dataClient.addListener(dataListener)
+
+                    it.invokeOnCancellation {
+                        dataClient.removeListener(dataListener)
+                    }
+                }
+            }
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
@@ -145,6 +168,7 @@ class WatchFaceService : CanvasWatchFaceService() {
                     Cfg.KEY_LAYOUT -> updateLayoutFromConfig()
                     Cfg.KEY_THEME -> updateThemeFromConfig()
                     Cfg.KEY_ACCENT_COLOR -> updateThemeAccentColorFromConfig()
+                    Cfg.KEY_GRAYSCALE_IN_AMBIENT -> bindTheme()
                     else -> return
                 }
             }
@@ -207,11 +231,13 @@ class WatchFaceService : CanvasWatchFaceService() {
                 Cfg.THEME_LIGHT -> Theme.LIGHT
                 else -> throw IllegalArgumentException()
             }.copy(clockHourColor = Cfg.accentColor)
+            themeAmbient = themeAmbientGrayscale.copy(clockHourColor = Cfg.accentColor)
         }
 
         private fun updateThemeAccentColorFromConfig() {
             // Apply the accent color.
             theme.clockHourColor = Cfg.accentColor
+            themeAmbient.clockHourColor = Cfg.accentColor
 
             // Bind to view
             bindTheme()
@@ -238,7 +264,6 @@ class WatchFaceService : CanvasWatchFaceService() {
 
         override fun onAmbientModeChanged(inAmbientMode: Boolean) {
             super.onAmbientModeChanged(inAmbientMode)
-            view.setAntiAlias(!inAmbientMode)
 
             // Bind every complication icon, to apply the ambient mode icons
             // if needed.
@@ -331,11 +356,15 @@ class WatchFaceService : CanvasWatchFaceService() {
         }
 
         /**
-         * Binds [theme] (or [themeAmbient] if we are in the ambient mode)
+         * Binds [theme] (or [themeAmbientGrayscale] if we are in the ambient mode)
          * to current view.
          */
         private fun bindTheme() {
-            view.setTheme(if (isInAmbientMode) themeAmbient else theme)
+            view.setTheme(
+                if (isInAmbientMode)
+                    if (Cfg.grayscaleInAmbient) themeAmbientGrayscale else themeAmbient
+                else theme
+            )
         }
 
         override fun onSurfaceChanged(

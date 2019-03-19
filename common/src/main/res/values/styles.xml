@@ -1,0 +1,75 @@
+<resources>
+
+    <!-- Complications -->
+
+    <style name="WatchFaceComplication">
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/manrope_semibold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">-0.025</item>
+    </style>
+
+    <style name="WatchFaceComplication.Horizontal" parent="WatchFaceComplication">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:paddingStart">@dimen/watchface_start_padding</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingEnd">@dimen/watchface_end_padding</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="WatchFaceComplication.Vertical" parent="WatchFaceComplication">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <!-- Clock -->
+
+    <style name="WatchFaceClock">
+        <item name="android:forceHasOverlappingRendering">false</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:lineSpacingExtra">0dp</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textScaleX">0.9</item>
+        <item name="android:textSize">64sp</item>
+    </style>
+
+    <style name="WatchFaceClock.Hour" parent="WatchFaceClock">
+        <item name="android:fontFamily">@font/manrope_semibold</item>
+    </style>
+
+    <style name="WatchFaceClock.Minute" parent="WatchFaceClock">
+        <item name="android:fontFamily">@font/manrope_light</item>
+    </style>
+
+    <style name="WatchFaceClock.Hour.Vertical" parent="WatchFaceClock.Hour">
+        <item name="android:translationY">8dp</item>
+        <item name="android:gravity">end|bottom</item>
+    </style>
+
+    <style name="WatchFaceClock.Minute.Vertical" parent="WatchFaceClock.Minute">
+        <item name="android:translationY">-8dp</item>
+        <item name="android:gravity">end|top</item>
+        <item name="android:textSize">52sp</item>
+    </style>
+
+    <style name="WatchFaceClock.Hour.Horizontal" parent="WatchFaceClock.Hour">
+        <item name="android:translationY">8dp</item>
+        <item name="android:gravity">end|bottom</item>
+    </style>
+
+    <style name="WatchFaceClock.Minute.Horizontal" parent="WatchFaceClock.Minute">
+        <item name="android:translationY">8dp</item>
+        <item name="android:gravity">start|bottom</item>
+    </style>
+
+    <style name="WatchFaceClock.Minute.Horizontal.Divider" parent="WatchFaceClock.Minute.Horizontal">
+        <item name="android:paddingStart">0dp</item>
+    </style>
+
+</resources>

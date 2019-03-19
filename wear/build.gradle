@@ -45,6 +45,10 @@ android {
     String timeYear = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date)
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             zipAlignEnabled true
             shrinkResources false
@@ -65,7 +69,7 @@ android {
 
 dependencies {
     implementation project(":common")
-    implementation "com.artemchep.config:config:2.0.2"
+    implementation "com.artemchep.config:config:$config_version"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -80,8 +84,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"
 
     implementation "com.google.android.material:material:1.0.0"
-    implementation "com.google.android.support:wearable:2.4.0"
-    implementation "com.google.android.gms:play-services-wearable:16.0.1"
 
-    compileOnly 'com.google.android.wearable:wearable:2.4.0'
+    implementation "com.google.android.support:wearable:$wearable_version"
+    implementation "com.google.android.gms:play-services-wearable:16.0.1"
+    compileOnly "com.google.android.wearable:wearable:$wearable_version"
 }

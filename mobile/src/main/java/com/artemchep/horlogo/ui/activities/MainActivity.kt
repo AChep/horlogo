@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.core.graphics.luminance
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.artemchep.config.Config
@@ -19,6 +20,8 @@ import com.artemchep.horlogo.WATCH_COMPLICATION_SECOND
 import com.artemchep.horlogo.contracts.IMainPresenter
 import com.artemchep.horlogo.contracts.IMainView
 import com.artemchep.horlogo.presenters.MainPresenterMobile
+import com.artemchep.horlogo.sync.CfgDataClientAdapter
+import com.artemchep.horlogo.sync.DataClientCfgAdapter
 import com.artemchep.horlogo.ui.activities.base.ActivityBase
 import com.artemchep.horlogo.ui.adapters.MainAdapter
 import com.artemchep.horlogo.ui.dialogs.AboutDialog
@@ -38,7 +41,6 @@ import java.util.*
  * @author Artem Chepurnoy
  */
 class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
-    DataClient.OnDataChangedListener,
     Config.OnConfigChangedListener<String>,
     PickerDialog.PickerDialogCallback,
     OnItemClickListener<ConfigItem>,
@@ -51,6 +53,9 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
     private lateinit var adapter: MainAdapter
 
     private lateinit var watchFaceView: WatchFaceView
+
+    private val dataSyncObserver = DataClientCfgAdapter(this)
+    private val cfgSyncObserver = CfgDataClientAdapter(this)
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -84,8 +89,8 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
 
     override fun onStart() {
         super.onStart()
-        Cfg.addListener(this)
-        //dataClient.addListener(this)
+        Cfg.observe(this)
+        dataClient.addListener(dataSyncObserver)
 
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_TIMEZONE_CHANGED)
@@ -100,8 +105,8 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
 
     override fun onStop() {
         unregisterReceiver(broadcastReceiver)
-        //dataClient.removeListener(this)
-        Cfg.removeListener(this)
+        dataClient.removeListener(dataSyncObserver)
+        Cfg.removeObserver(this)
         super.onStop()
     }
 
@@ -115,22 +120,9 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
                 }
                 Cfg.KEY_LAYOUT -> updateWatchFaceLayout()
             }
-
-            // Push the changes to our
-            // watch.
-            val request = PutDataMapRequest.create("/$key")
-            when (key) {
-                Cfg.KEY_THEME -> request.dataMap.putString(key, Cfg.themeName)
-                Cfg.KEY_ACCENT_COLOR -> request.dataMap.putInt(key, Cfg.accentColor)
-                Cfg.KEY_LAYOUT -> request.dataMap.putString(key, Cfg.layoutName)
-            }
-
-            dataClient.putDataItem(
-                request
-                    .asPutDataRequest()
-                    .setUrgent()
-            )
         }
+
+        cfgSyncObserver.onConfigChanged(keys)
     }
 
     override fun onClick(view: View) {
@@ -145,40 +137,6 @@ class MainActivity : ActivityBase<IMainView, IMainPresenter>(), IMainView,
 
     override fun onSingleItemPicked(requestCode: Int, resultCode: Int, key: String?) {
         presenter.result(requestCode, resultCode, key)
-    }
-
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        val actions = ArrayList<() -> Unit>()
-        for (event in dataEvents) {
-            when (event.type) {
-                DataEvent.TYPE_CHANGED -> {
-                    val item = event.dataItem
-                    val dataMap = DataMapItem.fromDataItem(item).dataMap
-
-                    when (item.uri.path) {
-                        "/{${Cfg.KEY_THEME}" -> {
-                            actions += {
-                                Cfg.themeName = dataMap.getString(Cfg.KEY_THEME)
-                            }
-                        }
-                        "/{${Cfg.KEY_LAYOUT}" -> {
-                            actions += {
-                                Cfg.layoutName = dataMap.getString(Cfg.KEY_LAYOUT)
-                            }
-                        }
-                        "/{${Cfg.KEY_ACCENT_COLOR}" -> {
-                            actions += {
-                                Cfg.accentColor = dataMap.getInt(Cfg.KEY_ACCENT_COLOR)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Cfg.edit(this) {
-            actions.forEach { it() }
-        }
     }
 
     //

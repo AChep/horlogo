@@ -10,6 +10,7 @@
     <string name="config_complication_fourth_line">Fourth line</string>
     <string name="config_layout">Layout</string>
     <string name="config_theme">Theme</string>
+    <string name="config_grayscale">Grayscale in ambient mode</string>
     <string name="config_accent">Accent color</string>
     <string name="config_about">About</string>
 
@@ -22,6 +23,9 @@
 
     <string name="layout_vertical">Vertical</string>
     <string name="layout_horizontal">Horizontal</string>
+
+    <string name="grayscale_on">On</string>
+    <string name="grayscale_off">Off</string>
 
     <string name="red">Red</string>
     <string name="pink">Pink</string>

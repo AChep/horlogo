@@ -25,6 +25,11 @@ class MainPresenterMobile(context: Context) : MainPresenter(context) {
             id = IMainPresenter.ITEM_ACCENT_COLOR,
             icon = getDrawable(R.drawable.ic_palette),
             title = getString(R.string.config_accent)
+        ),
+        ConfigItem(
+            id = IMainPresenter.ITEM_GRAYSCALE,
+            icon = getDrawable(R.drawable.ic_grayscale),
+            title = getString(R.string.config_grayscale)
         )
     )
 

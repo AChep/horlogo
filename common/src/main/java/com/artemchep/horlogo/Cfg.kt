@@ -9,6 +9,7 @@ import com.artemchep.horlogo.ui.PALETTE_BLUE
 object Cfg : SharedPrefConfig("config") {
 
     const val KEY_ACCENT_COLOR = "accent"
+    const val KEY_GRAYSCALE_IN_AMBIENT = "grayscale_in_ambient"
     // Layout
     const val KEY_LAYOUT = "layout"
     const val LAYOUT_HORIZONTAL = "layout::horizontal"
@@ -22,5 +23,6 @@ object Cfg : SharedPrefConfig("config") {
     var accentColor: Int by configDelegate(KEY_ACCENT_COLOR, PALETTE_BLUE)
     var themeName: String by configDelegate(KEY_THEME, THEME_BLACK)
     var layoutName: String by configDelegate(KEY_LAYOUT, LAYOUT_VERTICAL)
+    var grayscaleInAmbient: Boolean by configDelegate(KEY_GRAYSCALE_IN_AMBIENT, true)
 
 }

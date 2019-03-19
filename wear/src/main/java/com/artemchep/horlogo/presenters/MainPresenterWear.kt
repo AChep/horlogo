@@ -32,6 +32,11 @@ class MainPresenterWear(context: Context) : MainPresenter(context) {
             title = getString(R.string.config_accent)
         ),
         ConfigItem(
+            id = IMainPresenter.ITEM_GRAYSCALE,
+            icon = getDrawable(R.drawable.ic_grayscale),
+            title = getString(R.string.config_grayscale)
+        ),
+        ConfigItem(
             id = IMainPresenter.ITEM_ABOUT,
             icon = getDrawable(R.drawable.ic_information_outline),
             title = getString(R.string.config_about)
