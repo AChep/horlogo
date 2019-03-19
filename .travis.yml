@@ -27,7 +27,7 @@ before_install:
   -in mobile/horlogo-release-enc.keystore -out mobile/horlogo-release.keystore -d
 - yes | sdkmanager "platforms;android-28"
 script:
-- "./gradlew build check"
+- "./gradlew assembleDebug"
 deploy:
   provider: releases
   api_key:
