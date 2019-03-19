@@ -34,6 +34,14 @@ android {
         }
     }
 
+    def isRunningOnTravis = System.getenv("CI") == "true"
+
+    if (isRunningOnTravis) {
+        signingConfigs.release.storePassword = System.getenv("password_store")
+        signingConfigs.release.keyPassword = System.getenv("password_key")
+        signingConfigs.release.keyAlias = System.getenv("key_alias")
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
