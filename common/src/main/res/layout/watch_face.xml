@@ -33,7 +33,6 @@
         app:layout_constraintBottom_toTopOf="@id/minute"
         app:layout_constraintEnd_toEndOf="@id/clock"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="0.55"
         tools:text="22" />
 
     <TextView
@@ -44,7 +43,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/clock"
         app:layout_constraintTop_toBottomOf="@id/hour"
-        app:layout_constraintVertical_weight="0.45"
         tools:text="22" />
 
     <!--
