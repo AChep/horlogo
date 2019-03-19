@@ -40,10 +40,6 @@ android {
         signingConfigs.release.keyAlias = System.getenv("key_alias")
     }
 
-    Date date = Calendar.getInstance().getTime()
-    String time = new SimpleDateFormat("EEE MMMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).format(date)
-    String timeYear = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date)
-
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
@@ -57,12 +53,6 @@ android {
             proguardFile getDefaultProguardFile('proguard-android.txt')
 
             signingConfig signingConfigs.release
-        }
-
-        // Add config fields to each of build types.
-        buildTypes.each {
-            it.buildConfigField "String", "MY_TIME", "\"" + time + "\""
-            it.buildConfigField "String", "MY_TIME_YEAR", "\"" + timeYear + "\""
         }
     }
 }
