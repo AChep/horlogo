@@ -23,7 +23,7 @@ data class Complication(
 ) {
 
     fun refreshActive() {
-        val now = SystemClock.currentThreadTimeMillis()
+        val now = System.currentTimeMillis()
         isActive = raw.isActive(now)
     }
 
@@ -32,7 +32,7 @@ data class Complication(
      * the time change.
      */
     fun refreshMessage(context: Context) {
-        val now = SystemClock.currentThreadTimeMillis()
+        val now = System.currentTimeMillis()
         val longText = raw.longText?.getText(context, now)
         val longTitle = raw.longTitle?.getText(context, now)
         val shortText = raw.shortText?.getText(context, now)
