@@ -66,7 +66,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
-    implementation "androidx.core:core-ktx:1.0.1"
+    implementation "androidx.core:core-ktx:1.0.2"
     implementation "androidx.recyclerview:recyclerview:$androidx_lib_version"
     implementation "androidx.percentlayout:percentlayout:$androidx_lib_version"
     implementation "androidx.appcompat:appcompat:1.0.2"
@@ -76,6 +76,6 @@ dependencies {
     implementation "com.google.android.material:material:1.0.0"
 
     implementation "com.google.android.support:wearable:$wearable_version"
-    implementation "com.google.android.gms:play-services-wearable:16.0.1"
+    implementation "com.google.android.gms:play-services-wearable:17.0.0"
     compileOnly "com.google.android.wearable:wearable:$wearable_version"
 }
